@@ -45,10 +45,6 @@ export default function App() {
             <ProductDetails />
             <ProductDetails />
             <ProductDetails />
-            <ProductDetails />
-            <ProductDetails />
-            <ProductDetails />
-            <ProductDetails />
           </ScrollView>
         </View>
         <View style={styles.addButtonsWrapper}>

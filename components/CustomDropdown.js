@@ -1,39 +1,61 @@
 import React, { useState } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { theme } from "../assets/theme";
 
 const CustomDropdown = ({ options }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [style, setStyle] = useState(theme.notActive);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
+    setStyle(isDropdownOpen ? theme.notActive : theme.active);
   };
 
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
+    
+    const updatedStyle = options.map((opt) =>
+      opt === option ? theme.active : theme.notActive
+    );
+    setStyle(updatedStyle);
   };
 
   return (
     <View style={styles.dropdownContainer}>
-      <TouchableOpacity onPress={toggleDropdown} style={styles.dropdownButton}>
-        <Text>{selectedOption || ""}</Text>
-
-        <Ionicons
-          style={{ fontSize: 20 }}
-          name="chevron-down-outline"
-        ></Ionicons>
+      <TouchableOpacity
+        onPress={toggleDropdown}
+        style={
+          options[0] === "M"
+            ? [theme.dropdownButtonSizes, style]
+            : theme.dropdownButtonCurrency
+        }
+      >
+        <View>
+          <Text>{selectedOption || ""}</Text>
+        </View>
+        <View>
+          <Ionicons
+            style={[styles.dropDownIcon, { fontSize: 20 }]}
+            name={
+              options[0] === "M" ? "chevron-down-outline" : "caret-down-outline"
+            }
+          />
+        </View>
       </TouchableOpacity>
       {isDropdownOpen && (
         <View style={styles.dropdown}>
           {options.map((option, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.pickerItem}
+              style={[styles.pickerItem,style]}
               onPress={() => handleOptionSelect(option)}
             >
-              <Text>{option}</Text>
+              <Text style={[selectedOption === option ? [style] : styles.option]}>
+                {option}
+              </Text>
             </TouchableOpacity>
           ))}
         </View>
@@ -46,22 +68,13 @@ const styles = StyleSheet.create({
   dropdownContainer: {
     flexDirection: "row",
     flexWrap: "wrap",
-    width: "22%",
-    marginRight: 6,
+    marginRight: 4,
     marginBottom: 10,
-    borderRadius: 6,
-    borderWidth: 1,
-    opacity: 0.4,
     position: "relative",
   },
-  dropdownButton: {
-    flexDirection: "row",
-    borderWidth: 1,
-    borderColor: "#ccc",
-    paddingVertical: 4,
-    paddingHorizontal: 24,
-    alignItems: "center",
-    justifyContent:"space-between",
+ 
+  dropDownIcon:{
+    alignSelf:"flex-end"
   },
   dropdown: {
     position: "absolute",
@@ -69,15 +82,16 @@ const styles = StyleSheet.create({
     left: 0,
     width: "100%",
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: theme.colors.dark,
     backgroundColor: "#fff",
-    zIndex: 1,
+    zIndex: 12,
   },
   option: {
     paddingVertical: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    fontWeight:"500",
   },
 });
 

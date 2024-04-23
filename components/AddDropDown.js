@@ -23,12 +23,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderStyle:"dashed",
-    paddingVertical: 6,
-    paddingHorizontal: 25,
+    paddingVertical: 3,
+    paddingHorizontal: 20,
+    width:70,
     alignItems: "center",
     justifyContent: "center",
-    marginRight:10,
-    borderRadius:8
+    marginRight:4,
+    borderRadius:6
   },
 });
 export default AddDropDown;
