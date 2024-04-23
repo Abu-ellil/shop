@@ -53,7 +53,7 @@ const CustomDropdown = ({ options }) => {
               style={[styles.pickerItem,style]}
               onPress={() => handleOptionSelect(option)}
             >
-              <Text style={[selectedOption === option ? [style] : styles.option]}>
+              <Text style={styles.option}>
                 {option}
               </Text>
             </TouchableOpacity>
@@ -71,10 +71,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
     marginBottom: 10,
     position: "relative",
-  },
- 
-  dropDownIcon:{
-    alignSelf:"flex-end"
+    zIndex:1
   },
   dropdown: {
     position: "absolute",
@@ -84,14 +81,18 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.dark,
     backgroundColor: "#fff",
-    zIndex: 12,
+    borderRadius: 6,
+    zIndex: 10,
+  },
+  pickerItem:{
+    zIndex:11
   },
   option: {
-    paddingVertical: 10,
+    // paddingVertical: 10,
     paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
-    fontWeight:"500",
+    fontWeight: "500",
   },
 });
 

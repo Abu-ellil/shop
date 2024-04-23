@@ -117,14 +117,14 @@ const ProductDetails = () => {
 
 const styles = StyleSheet.create({
   productCard: {
+    // height: 600,
     backgroundColor: theme.colors.light,
     borderRadius: 12,
-    // height: 600,
     borderColor: theme.colors.gray,
     borderWidth: 1,
     paddingVertical: 20,
     paddingHorizontal: 10,
-    marginBottom:20
+    marginBottom:30
   },
   productCardTop: {
     width: "100%",
@@ -137,10 +137,11 @@ const styles = StyleSheet.create({
     marginBottom:20,
   },
   colorContainer: {
-    width: "50%",
-    paddingRight: 53,
+    width: "45%",
+    paddingRight: 13,
   },
   imageContainer: {
+    height: 200,
     flex: 1,
     backgroundColor: "orange",
     alignItems: "center",
