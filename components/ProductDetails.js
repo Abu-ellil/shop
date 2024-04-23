@@ -1,13 +1,16 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { Image } from "react-native";
 import { StyleSheet, Text, View } from "react-native";
 import { theme } from "../assets/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import CustomDropdown from "./CustomDropdown";
+import AddDropDown from "./AddDropDown";
 
 
-export class ProductDetails extends Component {
-  render() {
+const ProductDetails =()=> {
+  
     const colors = ["#1D396Cff", "#06A6D0ff", "#E62230ff", "#EC6000ff","green"];
+    const options = ["M", "L", "XL", "S"]; 
 
     return (
       <View style={styles.productCard}>
@@ -48,12 +51,21 @@ export class ProductDetails extends Component {
         </View>
 
         <View style={styles.productCardBottom}>
-          <Text style={theme.fontFamily}>حدد الاحجام المتاحة من المنتج</Text>
+          <View>
+            <Text style={[theme.fontFamily, styles.text]}>حدد الاحجام المتاحة من المنتج</Text>
+          </View>
+          <View style={styles.optionsContainer}>
+            <AddDropDown/>
+            <CustomDropdown options={options} />
+            <CustomDropdown options={options} />
+            <CustomDropdown options={options} />
+            <CustomDropdown options={options} />
+          </View>
         </View>
       </View>
     );
   }
-}
+
 
 const styles = StyleSheet.create({
   productCard: {
@@ -137,6 +149,11 @@ const styles = StyleSheet.create({
     flex: 2,
     borderColor: "#ccc",
     borderWidth: 1,
+    padding:10
+  },
+  optionsContainer:{
+    flexDirection:"row",
+    flexWrap:"wrap"
   },
 });
 

@@ -7,12 +7,12 @@ export const theme = {
     light: "#f8f8f8",
     gray: "#eeeeee",
   },
+  fontFamily: {
+    fontFamily: "Almarai-Bold",
+  },
   fontSizes: {
     small: 14,
     medium: 18,
     large: 24,
-  },
-  fontFamily: {
-    fontFamily: "Almarai-Bold",
   },
 };

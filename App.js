@@ -1,6 +1,6 @@
 import React from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, ScrollView } from "react-native";
 import { useFonts } from "expo-font";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ProductDetails from "./components/ProductDetails";
@@ -19,36 +19,53 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <View style={styles.mainWrapper}>
-        <View style={styles.addProductHeader}>
-          <View style={styles.backArrowWrapper}>
-            <Ionicons
-              style={styles.backArrowIcone}
-              name="arrow-forward-outline"
-            ></Ionicons>
+    <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+      <View style={styles.container}>
+        <StatusBar style="auto" />
+        <View style={styles.mainWrapper}>
+          <View style={styles.addProductHeader}>
+            <View style={styles.backArrowWrapper}>
+              <Ionicons
+                style={styles.backArrowIcone}
+                name="arrow-forward-outline"
+              ></Ionicons>
+            </View>
+
+            <View style={styles.textArea}>
+              <Text style={[theme.fontFamily, styles.text]}>إضافة منتج</Text>
+            </View>
+          </View>
+          <View>
+            <Text style={[theme.fontFamily, styles.text]}>
+              قم باضافة تفاصيل المنتج
+            </Text>
           </View>
 
-          <View style={styles.textArea}>
-            <Text style={[theme.fontFamily, styles.text]}>إضافة منتج</Text>
-          </View>
+          <ScrollView>
+            <ProductDetails />
+            <ProductDetails />
+            <ProductDetails />
+            <ProductDetails />
+            <ProductDetails />
+            <ProductDetails />
+            <ProductDetails />
+          </ScrollView>
         </View>
-        <View>
-          <Text style={[theme.fontFamily, styles.text]}>
-            قم باضافة تفاصيل المنتج{" "}
+        <View style={styles.addButtonsWrapper}>
+          <Text onPress={() => { alert("اضافة عنصر جديد من المنتج") }} style={styles.addNewProductButtons}>
+            اضافة عنصر جديد من المنتج
           </Text>
-        </View>
-
-        <View>
-          <ProductDetails />
+          <Text onPress={() => { alert("اضافة منتج جديد") }} style={styles.addProductButtons}>اضافة منتج جديد</Text>
         </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  scrollViewContainer: {
+    flexGrow: 1,
+  },
   container: {
     flex: 1,
     backgroundColor: "theme.colors.vl",
@@ -70,7 +87,7 @@ const styles = StyleSheet.create({
   text: {
     color: theme.colors.primary,
     fontSize: theme.fontSizes.medium,
-    paddingVertical:20
+    paddingVertical: 20,
   },
   backArrowWrapper: {
     flexDirection: "row",
@@ -80,5 +97,38 @@ const styles = StyleSheet.create({
   backArrowIcone: {
     fontSize: 40,
     color: "#3C3C3Cff",
+  },
+  addButtonsWrapper: {
+    width: "100%",
+    padding: 18,
+    position: "absolute",
+    bottom: 0,
+    backgroundColor: theme.colors.light,
+  },
+  addNewProductButtons: {
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
+    paddingVertical: 25,
+    backgroundColor: theme.colors.light,
+    borderColor: theme.colors.primary,
+    borderWidth: 2,
+    borderRadius: 8,
+    marginBottom: 20,
+    fontFamily: theme.fontFamily.fontFamily,
+    textAlign: "center",
+    color: theme.colors.primary,
+    fontSize:theme.fontSizes.medium
+  },
+  addProductButtons: {
+    width: "100%",
+    paddingVertical: 25,
+    backgroundColor: theme.colors.primary,
+    borderRadius: 8,
+    marginBottom: 20,
+    fontFamily: theme.fontFamily.fontFamily,
+    color: theme.colors.light,
+    textAlign: "center",
+    fontSize:theme.fontSizes.medium
   },
 });
