@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingVertical: 20,
     paddingHorizontal: 10,
-    marginBottom:30
+    marginBottom: 30,
   },
   productCardTop: {
     width: "100%",
@@ -133,8 +133,8 @@ const styles = StyleSheet.create({
     alignItems: "flex-start",
     justifyContent: "space-between",
     paddingVertical: 10,
-    flex: 1, 
-    marginBottom:20,
+    flex: 1,
+    marginBottom: 20,
   },
   colorContainer: {
     width: "45%",
@@ -148,7 +148,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     borderRadius: 12,
     overflow: "hidden",
-   
   },
   image: {
     height: "100%",
@@ -164,7 +163,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
-    marginTop: 10,
   },
 
   colorCircle: {
@@ -240,9 +238,11 @@ const styles = StyleSheet.create({
     backgroundColor: "red",
   },
   discount: {
+    width: "40%",
     flexDirection: "row",
     alignItems: "center",
     paddingTop: 20,
+    zIndex:0
   },
 });
 
