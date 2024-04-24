@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "shop",
-    "slug": "shop",
+    "name": "test",
+    "slug": "test",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,27 +22,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.aboellil.shop"
+      "package": "com.aboellil.test"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      [
-        "expo-font",
-        {
-          "fonts": [
-            {
-              "asset": "./assets/fonts/Almarai-Bold.ttf",
-              "fontWeight": "bold"
-            }
-          ]
-        }
-      ]
-    ],
     "extra": {
       "eas": {
-        "projectId": "d8b2aafd-fff0-4c14-a840-487726a55d55"
+        "projectId": "7ef0467b-66c6-4654-a980-807f64e5d167"
       }
     }
   }

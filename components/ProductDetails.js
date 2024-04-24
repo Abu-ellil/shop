@@ -160,21 +160,22 @@ const styles = StyleSheet.create({
     paddingBottom: 19,
   },
   colors: {
+    width:"90%",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
 
   colorCircle: {
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
     borderRadius: 50,
     marginBottom: 10,
   },
   addImageButton: {
     position: "absolute",
-    width: 35,
-    height: 35,
+    width: 40,
+    height: 40,
     borderWidth: 2,
     borderRadius: 50,
     borderColor: theme.colors.light,
