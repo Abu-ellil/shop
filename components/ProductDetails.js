@@ -167,15 +167,15 @@ const styles = StyleSheet.create({
   },
 
   colorCircle: {
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderRadius: 50,
     marginBottom: 10,
   },
   addImageButton: {
     position: "absolute",
-    width: 40,
-    height: 40,
+    width: 35,
+    height: 35,
     borderWidth: 2,
     borderRadius: 50,
     borderColor: theme.colors.light,
