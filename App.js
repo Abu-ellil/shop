@@ -7,7 +7,9 @@ import ProductDetails from "./components/ProductDetails";
 import { theme } from "./assets/theme";
 import { I18nManager } from "react-native";
 
-I18nManager.forceRTL(true);
+
+
+// I18nManager.forceRTL(true);
 
 export default function App() {
   const [fontsLoaded] = useFonts({
@@ -43,9 +45,7 @@ export default function App() {
 
           <ScrollView>
             <ProductDetails />
-            <ProductDetails />
-            <ProductDetails />
-          </ScrollView>
+            </ScrollView>
         </View>
         <View style={styles.addButtonsWrapper}>
           <Text onPress={() => { alert("اضافة عنصر جديد من المنتج") }} style={styles.addNewProductButtons}>
@@ -97,8 +97,6 @@ const styles = StyleSheet.create({
   addButtonsWrapper: {
     width: "100%",
     padding: 18,
-    position: "absolute",
-    bottom: 0,
     backgroundColor: theme.colors.light,
   },
   addNewProductButtons: {

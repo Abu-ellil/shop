@@ -21,11 +21,12 @@ const AddDropDown = () => {
 const styles = StyleSheet.create({
   addDropDown: {
     borderWidth: 1,
-    borderColor: "#ccc",
+    borderColor: "gray",
     borderStyle:"dashed",
     paddingVertical: 3,
     paddingHorizontal: 20,
-    width:70,
+    width:75,
+    height:35,
     alignItems: "center",
     justifyContent: "center",
     marginRight:4,

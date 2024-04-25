@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { theme } from "../assets/theme";
 
-const CustomDropdown = ({ options }) => {
+const CustomDropdown = ({ product }) => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [style, setStyle] = useState(theme.notActive);
@@ -16,7 +16,7 @@ const CustomDropdown = ({ options }) => {
   const handleOptionSelect = (option) => {
     setSelectedOption(option);
     setIsDropdownOpen(false);
-    
+
     const updatedStyle = options.map((opt) =>
       opt === option ? theme.active : theme.notActive
     );
@@ -27,11 +27,8 @@ const CustomDropdown = ({ options }) => {
     <View style={styles.dropdownContainer}>
       <TouchableOpacity
         onPress={toggleDropdown}
-        style={
-          options[0] === "M"
-            ? [theme.dropdownButtonSizes, style]
-            : theme.dropdownButtonCurrency
-        }
+        style={''}
+      
       >
         <View>
           <Text>{selectedOption || ""}</Text>
@@ -40,22 +37,21 @@ const CustomDropdown = ({ options }) => {
           <Ionicons
             style={[styles.dropDownIcon, { fontSize: 20 }]}
             name={
-              options[0] === "M" ? "chevron-down-outline" : "caret-down-outline"
+              "chevron-down-outline"
+              // options[0] === "M" ? "chevron-down-outline" : "caret-down-outline"
             }
           />
         </View>
       </TouchableOpacity>
       {isDropdownOpen && (
         <View style={styles.dropdown}>
-          {options.map((option, index) => (
+          {product.price.currency.map((option, index) => (
             <TouchableOpacity
               key={index}
-              style={[styles.pickerItem,style]}
+              style={[styles.pickerItem, style]}
               onPress={() => handleOptionSelect(option)}
             >
-              <Text style={styles.option}>
-                {option}
-              </Text>
+              <Text style={styles.option}>{option}</Text>
             </TouchableOpacity>
           ))}
         </View>

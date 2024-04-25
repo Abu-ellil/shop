@@ -1,116 +1,245 @@
-import React, { Component, useState } from "react";
-import { Image, TextInput } from "react-native";
-import { StyleSheet, Text, View } from "react-native";
+import React, { useRef, useState } from "react";
+import { Image, TextInput, View, ActivityIndicator } from "react-native"; // Import ActivityIndicator
+import { StyleSheet, Text } from "react-native";
 import { theme } from "../assets/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import CustomDropdown from "./CustomDropdown";
 import AddDropDown from "./AddDropDown";
 import { TouchableOpacity } from "react-native";
+import DropdownComponent from "./DropDown";
+import ColorPicker from "react-native-wheel-color-picker";
 
 const ProductDetails = () => {
-  const colors = ["red", "cyan", "navy", "orange", "green"];
-  const sizes = ["M", "L", "XL", "S"];
-  const currencyOptions = ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"];
+  let productsList = [
+    {
+      id: 1,
+      name: "T-Shirt",
+      price: {
+        currency: ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"],
+        value: 10,
+      },
+      imageUri: "../assets/1000.jpg",
+      colors: [],
+      sizes: [
+        { label: "S", value: "1" },
+        { label: "M", value: "2" },
+        { label: "L", value: "3" },
+        { label: "XL", value: "4" },
+        { label: "XXL", value: "5" },
+      ],
+    },
+  ];
+
+  const pickerRef = useRef(null);
+  const [currentColor, setCurrentColor] = useState("#ffffff");
+  const [swatchesOnly, setSwatchesOnly] = useState(false);
+  const [colorPickerOn, setColorPickerOn] = useState(false);
+  const [colorSelectionMade, setColorSelectionMade] = useState(false);
+  const [products, setProducts] = useState(productsList);
+  const [oldColor, setOldColor] = useState(null);
+
+
+
+
+  // Handel color sellection
+  const onColorChange = (color) => {
+    setCurrentColor(color);
+    console.log(products[0].colors);
+
+  };
+
+const onColorChangeComplete = (color) => {
+  setOldColor(color);
+  setColorSelectionMade(true); // Mark that a color selection has been made
+};
+
+  const addColor = (product) => {
+    if (currentColor !== undefined) {
+      const updatedProducts = [...products];
+      const updatedProduct = updatedProducts.find((p) => p.id === product.id);
+      updatedProduct.colors = [...updatedProduct.colors, currentColor];
+      setProducts(updatedProducts);
+      setCurrentColor("#ffffff");
+      setColorPickerOn(false);
+    } else {
+      console.log("Please select a color first.");
+    }
+  };
+
+
+  const replaceColor = (product,color,index) => {
+console.log(
+  product.colors[index],
+  color
+);
+  };
 
   return (
-    <View style={styles.productCard}>
-      <View style={styles.productCardTop}>
-        <View style={styles.colorContainer}>
-          <Text style={[theme.fontFamily, styles.text]}>اختر اللون</Text>
+    <View style={styles.container}>
+      {products.map((product) => {
+        return (
+          <View style={styles.productCard}>
+            <View style={styles.productCardTop}>
+              <View style={styles.colorContainer}>
+                <View style={styles.colors}>
+                  {colorPickerOn && (
+                    <View style={styles.colorPickerContainer}>
+                      {colorPickerOn && (
+                        <View style={styles.colorPickerContainer}>
+                          <ColorPicker
+                            ref={pickerRef}
+                            color={currentColor} // Use currentColor as the initial color
+                            swatchesOnly={swatchesOnly}
+                            onColorChange={onColorChange}
+                            onColorChangeComplete={() => {
+                              onColorChangeComplete(product);
+                              if (colorSelectionMade) {
+                              }
+                            }}
+                            thumbSize={40}
+                            sliderSize={40}
+                            noSnap={true}
+                            row={false}
+                            swatchesLast={false}
+                            swatches={true}
+                            discrete={false}
+                            wheelLodingIndicator={
+                              <ActivityIndicator size={40} color="#0000ff" />
+                            }
+                            sliderLodingIndicator={
+                              <ActivityIndicator size={20} color="#0000ff" />
+                            }
+                            useNativeDriver={false}
+                            useNativeLayout={false}
+                            style={styles.colorPicker}
+                            onPress={() => {
+                              setColorSelectionMade();
+                            }}
+                          />
+                          {/* Button */}
+                          <TouchableOpacity
+                            style={styles.addButton}
+                            onPress={() => {
+                              addColor(product);
+                              setColorPickerOn(false);
+                            }}
+                          >
+                            <Text>Add Color</Text>
+                          </TouchableOpacity>
+                          {/* Button */}
+                          {colorSelectionMade && colorPickerOn && (
+                            <TouchableOpacity
+                              style={styles.addButton}
+                              onPress={() => {
+                             replaceColor(product, color, index);
+                              }}
+                            >
+                              <Text>Change Color</Text>
+                            </TouchableOpacity>
+                          )}
+                        </View>
+                      )}
+                    </View>
+                  )}
+                  <View style={styles.addColorButton}>
+                    <View style={[]}></View>
+                    <Ionicons
+                      onPress={() => {
+                        setColorPickerOn(!colorPickerOn);
+                      }}
+                      style={{ fontSize: 18 }}
+                      name="add-outline"
+                    />
+                  </View>
+                  {product.colors.map((color, index) => (
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => {
+                        setCurrentColor(color);
+                        setColorSelectionMade(true);
+                        setColorPickerOn(true);
+                        replaceColor();
+                      }}
+                    >
+                      <View
+                        style={[styles.colorCircle, { backgroundColor: color }]}
+                      ></View>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+              <View style={styles.imageContainer}>
+                <Image
+                  style={styles.image}
+                  source={{ uri: product.imageUri }}
+                  resizeMode="contain"
+                />
+                <Image
+                  style={styles.image}
+                  source={require("../assets/1000.jpg")}
+                  resizeMode="contain"
+                />
+              </View>
+            </View>
 
-          <View style={styles.colors}>
-            {colors.map((color, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[styles.colorCircle, { backgroundColor: color }]}
-                onPress={() => console.log(color)}
-              ></TouchableOpacity>
-            ))}
+            <View style={styles.optionsContainer}>
+              <AddDropDown />
+              {product.sizes.map((option, index) => (
+                <>
+                  <DropdownComponent product={product} key={index} />
+                </>
+              ))}
+            </View>
+            <View style={styles.cardFooter}>
+              <View style={styles.cardFooterRight}>
+                <Text style={[theme.fontFamily, styles.text]}>
+                  سعر اللون الاول
+                </Text>
 
-            <View style={styles.addColorButton}>
+                <View style={styles.price}>
+                  <TextInput placeholder="Price" />
+                  <CustomDropdown
+                    style={styles.dropDown}
+                    options={product.price.currency}
+                  />
+                </View>
+              </View>
+
+              <View style={styles.cardFooterLeft}>
+                <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
+                <TextInput style={styles.quantity} placeholder="Quantity" />
+              </View>
+            </View>
+
+            <TouchableOpacity
+              style={styles.discount}
+              onPress={() => {
+                // console.log("Add discount ");
+              }}
+            >
               <Ionicons
-                onPress={() => {
-                  console.log("Add a new color");
+                style={{
+                  fontSize: 18,
+                  color: theme.colors.orangy,
+                  paddingLeft: 10,
                 }}
-                style={{ fontSize: 18 }}
-                name="add-outline"
+                name="add-circle-outline"
               ></Ionicons>
-            </View>
+              <Text
+                style={{
+                  fontSize: 18,
+                  color: theme.colors.orangy,
+                  fontFamily: theme.fontFamily.fontFamily,
+                }}
+              >
+                إضافة خصم
+              </Text>
+            </TouchableOpacity>
           </View>
-        </View>
-        <View style={styles.imageContainer}>
-          <Image
-            style={styles.image}
-            source={require("../assets/1000.jpg")}
-            resizeMode="contain"
-          />
-          <View style={styles.addImageButton}>
-            <Ionicons
-              style={{ fontSize: 18, color: "#fff" }}
-              name="add-outline"
-            ></Ionicons>
-          </View>
-        </View>
-        <View></View>
-      </View>
+        );
+      })}
 
-      <View style={styles.productCardBottom}>
-        <View>
-          <Text style={[theme.fontFamily, styles.text]}>
-            حدد الاحجام المتاحة من المنتج
-          </Text>
-        </View>
-        <View style={styles.optionsContainer}>
-          <AddDropDown />
-          <CustomDropdown options={sizes} />
-          <CustomDropdown options={sizes} />
-          <CustomDropdown options={sizes} />
-          <CustomDropdown options={sizes} />
-        </View>
-        <View style={styles.cardFooter}>
-          <View style={styles.cardFooterRight}>
-            <Text style={[theme.fontFamily, styles.text]}>سعر اللون الاول</Text>
-
-            <View style={styles.price}>
-              <TextInput placeholder="Price" />
-              <CustomDropdown
-                style={styles.dropDown}
-                options={currencyOptions}
-              />
-            </View>
-          </View>
-
-          <View style={styles.cardFooterLeft}>
-            <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
-            <TextInput style={styles.quantity} placeholder="Quantity" />
-          </View>
-        </View>
-
-        <TouchableOpacity
-          style={styles.discount}
-          onPress={() => {
-            console.log("Add discount ");
-          }}
-        >
-          <Ionicons
-            style={{
-              fontSize: 18,
-              color: theme.colors.orangy,
-              paddingLeft: 10,
-            }}
-            name="add-circle-outline"
-          ></Ionicons>
-          <Text
-            style={{
-              fontSize: 18,
-              color: theme.colors.orangy,
-              fontFamily: theme.fontFamily.fontFamily,
-            }}
-          >
-            إضافة خصم
-          </Text>
-        </TouchableOpacity>
-      </View>
+      {/* <View style={styles.productCard}></View> */}
     </View>
   );
 };
@@ -140,6 +269,20 @@ const styles = StyleSheet.create({
     width: "45%",
     paddingRight: 13,
   },
+  colorPickerContainer: {
+    position: "absolute",
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 8,
+    padding: 10,
+    zIndex: 1000,
+    backgroundColor: "white",
+  },
+  addButton: {
+    backgroundColor: "#ccc",
+    fontSize: 16,
+    zIndex: 1011,
+  },
   imageContainer: {
     height: 200,
     flex: 1,
@@ -160,7 +303,7 @@ const styles = StyleSheet.create({
     paddingBottom: 19,
   },
   colors: {
-    width:"90%",
+    width: "80%",
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
@@ -243,7 +386,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingTop: 20,
-    zIndex:0
+    zIndex: 0,
   },
 });
 
