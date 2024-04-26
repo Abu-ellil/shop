@@ -9,7 +9,7 @@ const DropdownComponent = ({ product }) => {
   // console.log(product.sizes);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-
+console.log(product);
   const renderItem = (item) => {
     return (
       <View style={styles.item}>

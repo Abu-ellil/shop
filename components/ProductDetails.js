@@ -1,13 +1,19 @@
-import React, { useRef, useState } from "react";
-import { Image, TextInput, View, ActivityIndicator } from "react-native"; // Import ActivityIndicator
-import { StyleSheet, Text } from "react-native";
-import { theme } from "../assets/theme";
 import Ionicons from "@expo/vector-icons/Ionicons";
-import CustomDropdown from "./CustomDropdown";
-import AddDropDown from "./AddDropDown";
-import { TouchableOpacity } from "react-native";
-import DropdownComponent from "./DropDown";
+import React, { useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native"; // Import ActivityIndicator
+import { Dropdown } from "react-native-element-dropdown";
 import ColorPicker from "react-native-wheel-color-picker";
+import { theme } from "../assets/theme";
+import AddDropDown from "./AddDropDown";
+import CustomDropdown from "./CustomDropdown";
 
 const ProductDetails = () => {
   let productsList = [
@@ -37,21 +43,39 @@ const ProductDetails = () => {
   const [colorSelectionMade, setColorSelectionMade] = useState(false);
   const [products, setProducts] = useState(productsList);
   const [oldColor, setOldColor] = useState(null);
+  const [value, setValue] = useState(null);
+  const [isFocus, setIsFocus] = useState(false);
 
 
+const [sizes, setSizes] = useState([
+  { label: "S", value: "1" },
+  { label: "M", value: "2" },
+  { label: "L", value: "3" },
+  { label: "XL", value: "4" },
+  { label: "XXL", value: "5" },
+]);
 
 
+  const handleAddSize = () => {
+    const newSizes = [...sizes];
+    const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
+    newSizes.push({ label: "New Size", value: newValue });
+    setSizes(newSizes);
+    setValue(newValue); // Select the newly added size
+  };
+  const handleOptionSelect = () => {
+    // Logic to handle option select
+  };
   // Handel color sellection
   const onColorChange = (color) => {
     setCurrentColor(color);
     console.log(products[0].colors);
-
   };
 
-const onColorChangeComplete = (color) => {
-  setOldColor(color);
-  setColorSelectionMade(true); // Mark that a color selection has been made
-};
+  const onColorChangeComplete = (color) => {
+    setOldColor(color);
+    setColorSelectionMade(true); // Mark that a color selection has been made
+  };
 
   const addColor = (product) => {
     if (currentColor !== undefined) {
@@ -66,12 +90,45 @@ const onColorChangeComplete = (color) => {
     }
   };
 
+  const replaceColor = (product, color, index) => {
+    console.log(product.colors[index], color);
+  };
 
-  const replaceColor = (product,color,index) => {
-console.log(
-  product.colors[index],
-  color
-);
+  // DropDown Menu Stuff``
+  const renderItem = (item) => {
+    console.log("item: ",item);
+    return (
+      <View style={styles.item}>
+        <Text style={styles.textItem}>{item.label}</Text>
+        {item.value === value && (
+          <View
+            style={styles.icon}
+            height={30}
+            borderRightWidth={3}
+            borderColor="orange"
+            marginLeft={10}
+            alignItems="flex-start"
+          />
+        )}
+      </View>
+    );
+  };
+
+  const renderLabel = (option) => {
+    if (value || isFocus) {
+      return (
+        <Text
+          style={[
+            styles.label,
+            isFocus && { color: "orange", borderColor: "orange" },
+          ]}
+        >
+          {option.label}
+          {/* {console.log(option.label)} */}
+        </Text>
+      );
+    }
+    return null;
   };
 
   return (
@@ -80,6 +137,18 @@ console.log(
         return (
           <View style={styles.productCard}>
             <View style={styles.productCardTop}>
+              <View style={styles.imageContainer}>
+                <Image
+                  style={styles.image}
+                  source={{ uri: product.imageUri }}
+                  resizeMode="contain"
+                />
+                <Image
+                  style={styles.image}
+                  source={require("../assets/1000.jpg")}
+                  resizeMode="contain"
+                />
+              </View>
               <View style={styles.colorContainer}>
                 <View style={styles.colors}>
                   {colorPickerOn && (
@@ -131,7 +200,7 @@ console.log(
                             <TouchableOpacity
                               style={styles.addButton}
                               onPress={() => {
-                             replaceColor(product, color, index);
+                                replaceColor(product, color, index);
                               }}
                             >
                               <Text>Change Color</Text>
@@ -141,56 +210,104 @@ console.log(
                       )}
                     </View>
                   )}
-                  <View style={styles.addColorButton}>
-                    <View style={[]}></View>
-                    <Ionicons
-                      onPress={() => {
-                        setColorPickerOn(!colorPickerOn);
-                      }}
-                      style={{ fontSize: 18 }}
-                      name="add-outline"
-                    />
+
+                  <Text style={[theme.fontFamily, styles.text]}>
+                    اختر اللون
+                  </Text>
+                  <View style={styles.colorList}>
+                    <View style={styles.addColorContainer}>
+                      <View style={styles.addColorButton}>
+                        <View style={[]}></View>
+                        <Ionicons
+                          onPress={() => {
+                            setColorPickerOn(!colorPickerOn);
+                          }}
+                          style={{ fontSize: 18 }}
+                          name="add-outline"
+                        />
+                      </View>
+                    </View>
+
+                    {product.colors.map((color, index) => (
+                      <TouchableOpacity
+                        key={index}
+                        onPress={() => {
+                          setCurrentColor(color);
+                          setColorSelectionMade(true);
+                          setColorPickerOn(true);
+                          replaceColor();
+                        }}
+                      >
+                        <View
+                          style={[
+                            styles.colorCircle,
+                            { backgroundColor: color },
+                          ]}
+                        ></View>
+                      </TouchableOpacity>
+                    ))}
                   </View>
-                  {product.colors.map((color, index) => (
-                    <TouchableOpacity
-                      key={index}
-                      onPress={() => {
-                        setCurrentColor(color);
-                        setColorSelectionMade(true);
-                        setColorPickerOn(true);
-                        replaceColor();
-                      }}
-                    >
-                      <View
-                        style={[styles.colorCircle, { backgroundColor: color }]}
-                      ></View>
-                    </TouchableOpacity>
-                  ))}
                 </View>
-              </View>
-              <View style={styles.imageContainer}>
-                <Image
-                  style={styles.image}
-                  source={{ uri: product.imageUri }}
-                  resizeMode="contain"
-                />
-                <Image
-                  style={styles.image}
-                  source={require("../assets/1000.jpg")}
-                  resizeMode="contain"
-                />
               </View>
             </View>
 
             <View style={styles.optionsContainer}>
-              <AddDropDown />
-              {product.sizes.map((option, index) => (
-                <>
-                  <DropdownComponent product={product} key={index} />
-                </>
+              <View style={styles.dropdownContainer}>
+                <TouchableOpacity
+                  onPress={handleAddSize}
+                  style={styles.addDropDown}
+                >
+                  <Ionicons
+                    style={{ fontSize: 20 }}
+                    name="add-outline"
+                  ></Ionicons>
+                </TouchableOpacity>
+                {/* Dropdown for adding new size */}
+                <View style={StyleSheet.dropdown}>
+                  <TouchableOpacity
+                    style={styles.pickerItem}
+                    onPress={handleOptionSelect}
+                  ></TouchableOpacity>
+                </View>
+              </View>
+
+              {/* Dropdown for selecting size */}
+              {sizes.map((option, index) => (
+                <View style={styles.container} key={index}>
+                  <View
+                    style={[
+                      styles.dropdown,
+                      isFocus && { borderColor: "orange" },
+                    ]}
+                  >
+                    {renderLabel(option)}
+                    <Dropdown
+                      style={styles.dropdownItem}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      iconStyle={styles.iconStyle}
+                      data={sizes}
+                      maxHeight={300}
+                      valueField="value"
+                      placeholder=""
+                      value={value}
+                      onFocus={() => setIsFocus(true)}
+                      onBlur={() => setIsFocus(false)}
+                      onChange={(item) => {
+                        setValue(item.value);
+                        setIsFocus(false);
+                      }}
+                      renderItem={renderItem}
+                    />
+                  </View>
+                </View>
               ))}
             </View>
             <View style={styles.cardFooter}>
+              <View style={styles.cardFooterLeft}>
+                <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
+                <TextInput style={styles.quantity} placeholder="Quantity" />
+              </View>
               <View style={styles.cardFooterRight}>
                 <Text style={[theme.fontFamily, styles.text]}>
                   سعر اللون الاول
@@ -204,27 +321,14 @@ console.log(
                   />
                 </View>
               </View>
-
-              <View style={styles.cardFooterLeft}>
-                <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
-                <TextInput style={styles.quantity} placeholder="Quantity" />
-              </View>
             </View>
 
             <TouchableOpacity
               style={styles.discount}
               onPress={() => {
-                // console.log("Add discount ");
+                addDiscount(product);
               }}
             >
-              <Ionicons
-                style={{
-                  fontSize: 18,
-                  color: theme.colors.orangy,
-                  paddingLeft: 10,
-                }}
-                name="add-circle-outline"
-              ></Ionicons>
               <Text
                 style={{
                   fontSize: 18,
@@ -234,19 +338,25 @@ console.log(
               >
                 إضافة خصم
               </Text>
+
+              <Ionicons
+                style={{
+                  fontSize: 18,
+                  color: theme.colors.orangy,
+                  paddingLeft: 10,
+                }}
+                name="add-circle-outline"
+              ></Ionicons>
             </TouchableOpacity>
           </View>
         );
       })}
-
-      {/* <View style={styles.productCard}></View> */}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   productCard: {
-    // height: 600,
     backgroundColor: theme.colors.light,
     borderRadius: 12,
     borderColor: theme.colors.gray,
@@ -267,16 +377,17 @@ const styles = StyleSheet.create({
   },
   colorContainer: {
     width: "45%",
-    paddingRight: 13,
+    paddingLeft: 13,
   },
+  addColorContainer: {},
   colorPickerContainer: {
     position: "absolute",
-    borderWidth: 1,
-    borderColor: "gray",
     borderRadius: 8,
     padding: 10,
-    zIndex: 1000,
     backgroundColor: "white",
+    width: 222,
+    height: 350,
+    zIndex: 1000,
   },
   addButton: {
     backgroundColor: "#ccc",
@@ -301,12 +412,18 @@ const styles = StyleSheet.create({
     fontSize: theme.fontSizes.medium,
     color: theme.colors.dark,
     paddingBottom: 19,
+    flex: 1,
   },
   colors: {
-    width: "80%",
-    flexDirection: "row",
+    width: "90%",
     flexWrap: "wrap",
     justifyContent: "space-between",
+  },
+  colorList: {
+    width: "100%",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    flexDirection: "row-reverse",
   },
 
   colorCircle: {
@@ -324,8 +441,9 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.light,
     alignItems: "center",
     justifyContent: "center",
-    bottom: 8,
-    right: 8,
+    bottom: 18,
+    right: 18,
+    zIndex: 1000,
   },
   addColorButton: {
     width: 35,
@@ -346,10 +464,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     padding: 10,
   },
-  optionsContainer: {
-    flexDirection: "row",
-    flexWrap: "wrap",
-  },
+
   cardFooter: {
     flexDirection: "row",
   },
@@ -378,15 +493,78 @@ const styles = StyleSheet.create({
     padding: 18,
   },
 
-  dropDown: {
-    backgroundColor: "red",
-  },
   discount: {
-    width: "40%",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "flex-end",
     paddingTop: 20,
-    zIndex: 0,
+  },
+  dropdownItem: {
+    width: 70,
+    height: 35,
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 10,
+  },
+  dropdown: {
+    marginRight: 6,
+    width: 80,
+    borderRadius: 6,
+    borderColor: "gray",
+    borderWidth: 1,
+    flexDirection: "row",
+    height: 35,
+    alignItems: "center",
+    justifyContent: "space-around",
+    marginBottom: 22,
+    paddingLeft: 10,
+  },
+
+  addDropDown: {
+    borderWidth: 1,
+    borderColor: "gray",
+    borderStyle: "dashed",
+    paddingVertical: 3,
+    paddingHorizontal: 20,
+    width: 75,
+    height: 35,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 4,
+    borderRadius: 6,
+    marginBottom: 22,
+  },
+  optionsContainer: {
+    flexDirection: "row-reverse",
+    flexWrap: "wrap",
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
+    marginBottom: 20,
+    marginTop: 10,
+  },
+  label: {
+    zIndex: 999,
+    paddingHorizontal: 10,
+    fontSize: 18,
+    fontWeight: "400",
+  },
+  item: {
+    flexDirection: "row",
+    padding: 6,
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  textItem: {
+    flex: 1,
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 30,
+    height: 30,
   },
 });
 

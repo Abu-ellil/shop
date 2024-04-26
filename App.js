@@ -5,7 +5,7 @@ import { useFonts } from "expo-font";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ProductDetails from "./components/ProductDetails";
 import { theme } from "./assets/theme";
-import { I18nManager } from "react-native";
+// import { I18nManager } from "react-native";
 
 
 
@@ -26,15 +26,15 @@ export default function App() {
         <StatusBar style="auto" />
         <View style={styles.mainWrapper}>
           <View style={styles.addProductHeader}>
+            <View style={styles.textArea}>
+              <Text style={[theme.fontFamily, styles.text]}>إضافة منتج</Text>
+            </View>
+
             <View style={styles.backArrowWrapper}>
               <Ionicons
                 style={styles.backArrowIcone}
                 name="arrow-forward-outline"
               ></Ionicons>
-            </View>
-
-            <View style={styles.textArea}>
-              <Text style={[theme.fontFamily, styles.text]}>إضافة منتج</Text>
             </View>
           </View>
           <View>
@@ -45,13 +45,25 @@ export default function App() {
 
           <ScrollView>
             <ProductDetails />
-            </ScrollView>
+          </ScrollView>
         </View>
         <View style={styles.addButtonsWrapper}>
-          <Text onPress={() => { alert("اضافة عنصر جديد من المنتج") }} style={styles.addNewProductButtons}>
+          <Text
+            onPress={() => {
+              alert("اضافة عنصر جديد من المنتج");
+            }}
+            style={styles.addNewProductButtons}
+          >
             اضافة عنصر جديد من المنتج
           </Text>
-          <Text onPress={() => { alert("اضافة منتج جديد") }} style={styles.addProductButtons}>اضافة منتج جديد</Text>
+          <Text
+            onPress={() => {
+              alert("اضافة منتج جديد");
+            }}
+            style={styles.addProductButtons}
+          >
+            اضافة منتج جديد
+          </Text>
         </View>
       </View>
     </ScrollView>
@@ -71,23 +83,29 @@ const styles = StyleSheet.create({
     margin: 20,
   },
   addProductHeader: {
+    width: "100%",
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
     borderBottomColor: "#3C3C3C11",
     borderBottomWidth: 1,
     paddingBottom: 10,
   },
   textArea: {
     flex: 2,
+    marginRight: 18,
   },
   text: {
+    justifyContent: "center",
     color: theme.colors.primary,
     fontSize: theme.fontSizes.medium,
-    paddingVertical: 20,
+    paddingVertical: 16,
+    
   },
   backArrowWrapper: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
     flex: 1,
   },
   backArrowIcone: {
