@@ -40,11 +40,14 @@ const ProductDetails = () => {
   const [currentColor, setCurrentColor] = useState("#ffffff");
   const [swatchesOnly, setSwatchesOnly] = useState(false);
   const [colorPickerOn, setColorPickerOn] = useState(false);
-  const [colorSelectionMade, setColorSelectionMade] = useState(false);
   const [products, setProducts] = useState(productsList);
-  const [oldColor, setOldColor] = useState(null);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+    const [chosenColorIndex, setChosenColorIndex] = useState(null);
+
+    const handleColorPress = (index) => {
+      setChosenColorIndex(index);
+    };
 
 
 const [sizes, setSizes] = useState([
@@ -56,6 +59,8 @@ const [sizes, setSizes] = useState([
 ]);
 
 
+
+
   const handleAddSize = () => {
     const newSizes = [...sizes];
     const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
@@ -63,7 +68,7 @@ const [sizes, setSizes] = useState([
     setSizes(newSizes);
     setValue(newValue); // Select the newly added size
   };
-  const handleOptionSelect = () => {
+  const handleOptionSelect = () => { 
     // Logic to handle option select
   };
   // Handel color sellection
@@ -90,9 +95,13 @@ const [sizes, setSizes] = useState([
     }
   };
 
-  const replaceColor = (product, color, index) => {
-    console.log(product.colors[index], color);
-  };
+//  const getColorCircleStyle = (color) => {
+//    const baseStyle = [styles.colorCircle, { backgroundColor: color }];
+//    if (currentColor === chosenColor) {
+//      return [...baseStyle, styles.chosenColorCircle];
+//    }
+//    return baseStyle;
+//  };
 
   // DropDown Menu Stuff``
   const renderItem = (item) => {
@@ -160,11 +169,7 @@ const [sizes, setSizes] = useState([
                             color={currentColor} // Use currentColor as the initial color
                             swatchesOnly={swatchesOnly}
                             onColorChange={onColorChange}
-                            onColorChangeComplete={() => {
-                              onColorChangeComplete(product);
-                              if (colorSelectionMade) {
-                              }
-                            }}
+                            onColorChangeComplete={() => {}}
                             thumbSize={40}
                             sliderSize={40}
                             noSnap={true}
@@ -195,17 +200,6 @@ const [sizes, setSizes] = useState([
                           >
                             <Text>Add Color</Text>
                           </TouchableOpacity>
-                          {/* Button */}
-                          {colorSelectionMade && colorPickerOn && (
-                            <TouchableOpacity
-                              style={styles.addButton}
-                              onPress={() => {
-                                replaceColor(product, color, index);
-                              }}
-                            >
-                              <Text>Change Color</Text>
-                            </TouchableOpacity>
-                          )}
                         </View>
                       )}
                     </View>
@@ -231,20 +225,14 @@ const [sizes, setSizes] = useState([
                     {product.colors.map((color, index) => (
                       <TouchableOpacity
                         key={index}
-                        onPress={() => {
-                          setCurrentColor(color);
-                          setColorSelectionMade(true);
-                          setColorPickerOn(true);
-                          replaceColor();
-                        }}
-                      >
-                        <View
-                          style={[
-                            styles.colorCircle,
-                            { backgroundColor: color },
-                          ]}
-                        ></View>
-                      </TouchableOpacity>
+                        onPress={() => handleColorPress(index)}
+                        style={[
+                          styles.colorCircle,
+                          index === chosenColorIndex &&
+                            styles.chosenColorCircle,
+                          { backgroundColor: color },
+                        ]}
+                      ></TouchableOpacity>
                     ))}
                   </View>
                 </View>
@@ -432,6 +420,24 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     marginBottom: 10,
   },
+  chosenColorCircle: {
+    width: 35,
+    height: 35,
+    borderRadius: 50,
+    marginBottom: 10,
+    borderWidth: 2,
+    borderColor: "yellow",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 2,
+      height: 2,
+    },
+    shadowOpacity: 1,
+    shadowRadius: 2.22,
+    elevation: 9,
+    
+  },
+
   addImageButton: {
     position: "absolute",
     width: 35,
