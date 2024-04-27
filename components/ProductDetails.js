@@ -9,10 +9,9 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native";
+} from "react-native"; // Import ActivityIndicator
 import { Dropdown } from "react-native-element-dropdown";
 import ColorPicker from "react-native-wheel-color-picker";
-import RNPickerSelect from "react-native-picker-select";
 import { theme } from "../assets/theme";
 
 const ProductDetails = ({ productsList }) => {
@@ -28,43 +27,29 @@ const ProductDetails = ({ productsList }) => {
 
   useEffect(() => {
     setProducts(productsList);
+    console.log(products);
   }, [productsList]);
 
-  const [sizes, setSizes] = useState([]);
-  const [selectedValue, setSelectedValue] = useState(null);
-  // Define state variable to track dropdown status
-  const [dropdownOpen, setDropdownOpen] = useState(
-    Array(sizes.length).fill(false)
-  );
-
-  // Function to toggle dropdown status
- const toggleDropdown = (index) => {
-   const updatedDropdownOpen = [...dropdownOpen];
-   updatedDropdownOpen[index] = !updatedDropdownOpen[index];
-   setDropdownOpen(updatedDropdownOpen);
- };
-
-  // DropDown Menu Stuff``
-
-  const placeholder = {
-    label: "Select",
-    value: null,
-  };
-
-  const option = ["S", "M","L", "XL"];
-
-const handleAddSize = () => {
-  const newSizes = [...sizes, ...option];
-  console.log("newSizes", newSizes);
-  setSizes(newSizes); 
-};
-  const handleOptionSelect = () => {};
-  // Handel color sellection
   const handleColorPress = (index) => {
     setChosenColorIndex(index);
   };
+
+
+
+  const handleAddSize = (sizes) => {
+    const newSizes = [...sizes];
+    const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
+    newSizes.push({ label: "New Size", value: newValue });
+    setSizes(newSizes);
+    setValue(newValue); // Select the newly added size
+  };
+  const handleOptionSelect = () => {
+    console.log(option);
+  };
+  // Handel color sellection
   const onColorChange = (color) => {
     setCurrentColor(color);
+    console.log(products[0].colors);
   };
 
   const onColorChangeComplete = (color) => {
@@ -85,46 +70,25 @@ const handleAddSize = () => {
     }
   };
 
-  // const renderItem = (item) => {
+  // DropDown Menu Stuff``
 
-  //   return (
-  //     <View style={styles.item}>
-  //       <Text style={styles.textItem}>{item.label}</Text>
-  //       {item.value === value && (
-  //         <View
-  //           style={styles.icon}
-  //           height={30}
-  //           borderRightWidth={3}
-  //           borderColor="orange"
-  //           marginLeft={10}
-  //           alignItems="flex-start"
-  //         />
-  //       )}
-  //     </View>
-  //   );
-  // };
-
-  // const renderLabel = (option) => {
-  //   console.log("option: ", option);
-  //   if (value || isFocus) {
-  //     return (
-  //       <Text
-  //         style={[
-  //           styles.label,
-  //           isFocus &&
-  //             option.value === value && {
-  //               color: "orange",
-  //               borderColor: "orange",
-  //             },
-  //         ]}
-  //       >
-  //         {option.label}
-  //         {/* {console.log(option.label)} */}
-  //       </Text>
-  //     );
-  //   }
-  //   return null;
-  // };
+  const renderItem = (item) => {
+    return (
+      <View style={styles.item}>
+        <Text style={styles.textItem}>{item.label}</Text>
+        {item.value === value && (
+          <View
+            style={styles.icon}
+            height={30}
+            borderRightWidth={3}
+            borderColor="orange"
+            marginLeft={10}
+            alignItems="flex-start"
+          />
+        )}
+      </View>
+    );
+  };
 
   const pickImage = async (productId) => {
     const options = {
@@ -142,12 +106,12 @@ const handleAddSize = () => {
       quality: 1,
     });
 
-    console.log(result.assets[0].uri);
+    console.log(result);
 
     if (!result.cancelled) {
       const updatedProducts = products.map((product) =>
         product.id === productId
-          ? { ...product, imageUri: result.assets[0].uri }
+          ? { ...product, imageUri: result.uri }
           : product
       );
       setProducts(updatedProducts);
@@ -161,6 +125,7 @@ const handleAddSize = () => {
   return (
     <View style={styles.container}>
       {products.map((product) => {
+        console.log("product id sss", product.id, product);
         return (
           <View style={styles.productCard} key={product.id}>
             <View style={styles.productCardTop}>
@@ -285,50 +250,38 @@ const handleAddSize = () => {
                   ></Ionicons>
                 </TouchableOpacity>
               </View>
-
+              
               {/* Dropdown for selecting size */}
-              {sizes.map((option, index) => (
+              {product.sizes.map((sizesArray, index) => (
                 <View style={styles.container} key={index}>
                   <View
                     style={[
                       styles.dropdown,
-                      isFocus && { borderColor: "orange" },
+                      // isFocus && { borderColor: "orange" },
                     ]}
                   >
-                    <TouchableOpacity
-                      onPress={() => toggleDropdown(index)}
-                      style={styles.dropdownHeader}
-                    >
-                      <Ionicons
-                        name={
-                          dropdownOpen[index]
-                            ? "chevron-down-outline"
-                            : "chevron-up-outline"
-                        }
-                        size={24}
-                        color="black"
-                      />
-                      <Text style={styles.dropdownItem}>
-                        {selectedValue || "Select Size"}{" "}
-                        {/* Display the selected option or default text */}
-                      </Text>
-                    </TouchableOpacity>
-                    {dropdownOpen[index] && (
-                      <View style={styles.dropdownContent}>
-                        {sizes.map((option, index) => (
-                          <TouchableOpacity
-                            key={index}
-                            style={styles.option}
-                            onPress={() => {
-                              setSelectedValue(option); // Update the selected value
-                              toggleDropdown(index); // Close the dropdown
-                            }}
-                          >
-                            <Text>{option}</Text>
-                          </TouchableOpacity>
-                        ))}
-                      </View>
-                    )}
+                    <Dropdown
+                      // style={styles.dropdown}
+                      placeholderStyle={styles.placeholderStyle}
+                      selectedTextStyle={styles.selectedTextStyle}
+                      iconStyle={styles.iconStyle}
+                      data={sizesArray.map((size) => ({
+                        label: size,
+                        value: size,
+                      }))}
+                      maxHeight={300}
+                      labelField="label"
+                      valueField="value"
+                      placeholder="Select size"
+                      value={value} // Use the selected size value here
+                      onChange={(item) => {
+                        setValue(item.value);
+                      }}
+                      renderLeftIcon={() => (
+                        <Ionicons name="chevron-down-outline" />
+                      )}
+                      renderItem={renderItem}
+                    />
                   </View>
                 </View>
               ))}
@@ -361,6 +314,7 @@ const handleAddSize = () => {
                       setValue(item.value);
                       setIsFocus(false);
                     }}
+                    renderItem={renderItem}
                   />
                 </View>
               </View>
@@ -399,38 +353,6 @@ const handleAddSize = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    position: "relative",
-    zIndex: 1,
-  },
-  // dropdownHeader: {
-  //   flexDirection: "row",
-  //   justifyContent: "space-between",
-  //   alignItems: "center",
-  //   paddingHorizontal: 16,
-  //   paddingVertical: 12,
-  //   borderWidth: 1,
-  //   borderColor: "black",
-  //   borderRadius: 8,
-  // },
-  dropdownContent: {
-    position: "absolute",
-    top: "100%",
-    left: 0,
-    right: 0,
-
-    borderWidth: 1,
-    borderColor: "black",
-    borderRadius: 8,
-    marginTop: 4,
-  },
-  option: {
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "black",
-  },
-
   productCard: {
     backgroundColor: theme.colors.light,
     borderRadius: 12,

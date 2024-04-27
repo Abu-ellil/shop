@@ -7,7 +7,7 @@ import ProductDetails from './ProductDetails';
 import { theme } from '../assets/theme';
 
 export default function EditProduct() {
-    const[productsList,setProductsList]= useState([
+    const [productsList, setProductsList] = useState([
       {
         id: 10,
         name: "",
@@ -19,14 +19,12 @@ export default function EditProduct() {
 
         colors: ["#F50909", "#110DF5", "#05F535", "#D2FB03", "#1DD4FD"],
         sizes: [
-          { label: "S", value: "1" },
-          { label: "M", value: "2" },
-          { label: "L", value: "3" },
-          { label: "XL", value: "4" },
-          { label: "XXL", value: "5" },
+          ["S", "M", "L", "XL"],
+          ["S", "M", "L", "XL"],
+          ["S", "M", "L", "XL"]
         ],
-      }
-    ])
+      },
+    ]);
     
     const [fontsLoaded] = useFonts({
       "Almarai-Bold": require("../assets/fonts/Almarai-Bold.ttf"),
