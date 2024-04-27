@@ -249,14 +249,23 @@ const ProductDetails = ({ productsList }) => {
                 </View>
               </View>
             </View>
-
-            <View style={styles.optionsContainer}>
-              <View>
+<View>
                 <Text style={[theme.fontFamily, styles.text]}>
                   حدد الاحجام المتاحة من المنتج
                 </Text>
               </View>
+            <View style={styles.optionsContainer}>
+              
+              
               <View style={styles.dropdownContainer}>
+               
+                {/* Dropdown for adding new size */}
+                <View style={StyleSheet.dropdown}>
+                  <TouchableOpacity
+                    style={styles.pickerItem}
+                    onPress={handleOptionSelect}
+                  ></TouchableOpacity>
+                </View> 
                 <TouchableOpacity
                   onPress={handleAddSize}
                   style={styles.addDropDown}
@@ -266,13 +275,6 @@ const ProductDetails = ({ productsList }) => {
                     name="add-outline"
                   ></Ionicons>
                 </TouchableOpacity>
-                {/* Dropdown for adding new size */}
-                <View style={StyleSheet.dropdown}>
-                  <TouchableOpacity
-                    style={styles.pickerItem}
-                    onPress={handleOptionSelect}
-                  ></TouchableOpacity>
-                </View>
               </View>
 
               {/* Dropdown for selecting size */}
@@ -565,8 +567,8 @@ const styles = StyleSheet.create({
     height: 35,
     alignItems: "center",
     justifyContent: "space-around",
-    // marginBottom: 22,
-    // paddingLeft: 10,
+    marginBottom: 22,
+    paddingLeft: 10,
   },
 
   addDropDown: {
