@@ -25,15 +25,24 @@ const ProductDetails = ({ productsList }) => {
   const [isFocus, setIsFocus] = useState(false);
   const [chosenColorIndex, setChosenColorIndex] = useState(null);
   const [image, setImage] = useState(null);
-  const [selectedValue, setSelectedValue] = useState(null);
 
   useEffect(() => {
     setProducts(productsList);
   }, [productsList]);
 
-
-
   const [sizes, setSizes] = useState([]);
+  const [selectedValue, setSelectedValue] = useState(null);
+  // Define state variable to track dropdown status
+  const [dropdownOpen, setDropdownOpen] = useState(
+    Array(sizes.length).fill(false)
+  );
+
+  // Function to toggle dropdown status
+ const toggleDropdown = (index) => {
+   const updatedDropdownOpen = [...dropdownOpen];
+   updatedDropdownOpen[index] = !updatedDropdownOpen[index];
+   setDropdownOpen(updatedDropdownOpen);
+ };
 
   // DropDown Menu Stuff``
 
@@ -42,35 +51,18 @@ const ProductDetails = ({ productsList }) => {
     value: null,
   };
 
-  const option = [
-    [
-      { label: "S", value: "1" },
-      { label: "M", value: "2" },
-      { label: "L", value: "3" },
-      { label: "XL", value: "4" },
-    ],
-  ];
+  const option = ["S", "M","L", "XL"];
 
-
-  const handleAddSize = () => {
-    const newSizes = [...sizes];
-    // const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
-    newSizes.push(option);
-    // options.push(
-    //   { label: "S", value: "1" },
-    //   { label: "M", value: "2" },
-    //   { label: "L", value: "3" },
-    //   { label: "XL", value: "4" }
-    // );
-    setSizes(newSizes);
-    console.log(newSizes);
-   
-  };
+const handleAddSize = () => {
+  const newSizes = [...sizes, ...option];
+  console.log("newSizes", newSizes);
+  setSizes(newSizes); 
+};
   const handleOptionSelect = () => {};
   // Handel color sellection
-    const handleColorPress = (index) => {
-      setChosenColorIndex(index);
-    };
+  const handleColorPress = (index) => {
+    setChosenColorIndex(index);
+  };
   const onColorChange = (color) => {
     setCurrentColor(color);
   };
@@ -300,20 +292,43 @@ const ProductDetails = ({ productsList }) => {
                   <View
                     style={[
                       styles.dropdown,
-                      // isFocus && { borderColor: "orange" },
+                      isFocus && { borderColor: "orange" },
                     ]}
                   >
-                    <View>
-                      <Text>+:</Text>
-                      <RNPickerSelect
-                        key={(value) => setSelectedValue(value)}
-                        placeholder={placeholder}
-                        items={sizes}
-                        onValueChange={(value) => setSelectedValue(value)}
-                        value={selectedValue?.value} // Use optional chaining
+                    <TouchableOpacity
+                      onPress={() => toggleDropdown(index)}
+                      style={styles.dropdownHeader}
+                    >
+                      <Ionicons
+                        name={
+                          dropdownOpen[index]
+                            ? "chevron-down-outline"
+                            : "chevron-up-outline"
+                        }
+                        size={24}
+                        color="black"
                       />
-                      {selectedValue && <Text> {selectedValue}</Text>}
-                    </View>
+                      <Text style={styles.dropdownItem}>
+                        {selectedValue || "Select Size"}{" "}
+                        {/* Display the selected option or default text */}
+                      </Text>
+                    </TouchableOpacity>
+                    {dropdownOpen[index] && (
+                      <View style={styles.dropdownContent}>
+                        {sizes.map((option, index) => (
+                          <TouchableOpacity
+                            key={index}
+                            style={styles.option}
+                            onPress={() => {
+                              setSelectedValue(option); // Update the selected value
+                              toggleDropdown(index); // Close the dropdown
+                            }}
+                          >
+                            <Text>{option}</Text>
+                          </TouchableOpacity>
+                        ))}
+                      </View>
+                    )}
                   </View>
                 </View>
               ))}
@@ -384,6 +399,38 @@ const ProductDetails = ({ productsList }) => {
 };
 
 const styles = StyleSheet.create({
+  container: {
+    position: "relative",
+    zIndex: 1,
+  },
+  // dropdownHeader: {
+  //   flexDirection: "row",
+  //   justifyContent: "space-between",
+  //   alignItems: "center",
+  //   paddingHorizontal: 16,
+  //   paddingVertical: 12,
+  //   borderWidth: 1,
+  //   borderColor: "black",
+  //   borderRadius: 8,
+  // },
+  dropdownContent: {
+    position: "absolute",
+    top: "100%",
+    left: 0,
+    right: 0,
+
+    borderWidth: 1,
+    borderColor: "black",
+    borderRadius: 8,
+    marginTop: 4,
+  },
+  option: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: "black",
+  },
+
   productCard: {
     backgroundColor: theme.colors.light,
     borderRadius: 12,
