@@ -31,26 +31,47 @@ const ProductDetails = ({ productsList }) => {
     setProducts(productsList);
   }, [productsList]);
 
-  const handleColorPress = (index) => {
-    setChosenColorIndex(index);
-  };
+
 
   const [sizes, setSizes] = useState([]);
 
+  // DropDown Menu Stuff``
+
+  const placeholder = {
+    label: "Select",
+    value: null,
+  };
+
+  const option = [
+    [
+      { label: "S", value: "1" },
+      { label: "M", value: "2" },
+      { label: "L", value: "3" },
+      { label: "XL", value: "4" },
+    ],
+  ];
+
+
   const handleAddSize = () => {
     const newSizes = [...sizes];
-    const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
-    // newSizes.push({ label: "New Size", value: newValue });
-    sizes.push({label: "S", value: "1" },{ label: "M", value: "2" },{ label: "L", value: "3" },{ label: "XL", value: "4" });
+    // const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
+    newSizes.push(option);
+    // options.push(
+    //   { label: "S", value: "1" },
+    //   { label: "M", value: "2" },
+    //   { label: "L", value: "3" },
+    //   { label: "XL", value: "4" }
+    // );
     setSizes(newSizes);
     console.log(newSizes);
-    // setValue(newValue);
+   
   };
-  const handleOptionSelect = () => {
-    
-  };
+  const handleOptionSelect = () => {};
   // Handel color sellection
-  const onColorChange = (color) => { 
+    const handleColorPress = (index) => {
+      setChosenColorIndex(index);
+    };
+  const onColorChange = (color) => {
     setCurrentColor(color);
   };
 
@@ -72,21 +93,8 @@ const ProductDetails = ({ productsList }) => {
     }
   };
 
-  // DropDown Menu Stuff``
-
-  const placeholder = {
-    label: "Select an option...",
-    value: null,
-  };
-
-  const options = [
-    { label: "Option 1", value: "option1" },
-    { label: "Option 2", value: "option2" },
-    { label: "Option 3", value: "option3" },
-  ];
-
   // const renderItem = (item) => {
-    
+
   //   return (
   //     <View style={styles.item}>
   //       <Text style={styles.textItem}>{item.label}</Text>
@@ -297,11 +305,12 @@ const ProductDetails = ({ productsList }) => {
                   >
                     <View>
                       <Text>+:</Text>
-                      <TouchableOpacity
+                      <RNPickerSelect
+                        key={(value) => setSelectedValue(value)}
                         placeholder={placeholder}
-                        items={options}
+                        items={sizes}
                         onValueChange={(value) => setSelectedValue(value)}
-                        value={selectedValue}
+                        value={selectedValue?.value} // Use optional chaining
                       />
                       {selectedValue && <Text> {selectedValue}</Text>}
                     </View>
