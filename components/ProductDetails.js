@@ -2,6 +2,7 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 import React, { useRef, useState } from "react";
 import {
   ActivityIndicator,
+  Button,
   Image,
   StyleSheet,
   Text,
@@ -11,15 +12,22 @@ import {
 } from "react-native"; // Import ActivityIndicator
 import { Dropdown } from "react-native-element-dropdown";
 import ColorPicker from "react-native-wheel-color-picker";
+import * as ImagePicker from "expo-image-picker";
 import { theme } from "../assets/theme";
-import AddDropDown from "./AddDropDown";
-import CustomDropdown from "./CustomDropdown";
+
+
+
+
+
+
+
+
 
 const ProductDetails = () => {
   let productsList = [
     {
       id: 1,
-      name: "T-Shirt",
+      name: "",
       price: {
         currency: ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"],
         value: 10,
@@ -36,6 +44,9 @@ const ProductDetails = () => {
     },
   ];
 
+
+
+  
   const pickerRef = useRef(null);
   const [currentColor, setCurrentColor] = useState("#ffffff");
   const [swatchesOnly, setSwatchesOnly] = useState(false);
@@ -44,6 +55,10 @@ const ProductDetails = () => {
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
     const [chosenColorIndex, setChosenColorIndex] = useState(null);
+const [image, setImage] = useState(null);
+
+
+
 
     const handleColorPress = (index) => {
       setChosenColorIndex(index);
@@ -140,23 +155,59 @@ const [sizes, setSizes] = useState([
     return null;
   };
 
+
+ const pickImage = async (productId) => {
+   const options = {
+     title: "Select Image",
+     storageOptions: {
+       skipBackup: true,
+       path: "images",
+     },
+   };
+
+   let result = await ImagePicker.launchImageLibraryAsync({
+     mediaTypes: ImagePicker.MediaTypeOptions.All,
+     allowsEditing: true,
+     aspect: [4, 3],
+     quality: 1,
+   });
+
+   console.log(result);
+
+   if (!result.cancelled) {
+     const updatedProducts = products.map((product) =>
+       product.id === productId ? { ...product, imageUri: result.uri } : product
+     );
+     setProducts(updatedProducts);
+   }
+ };
+
+ const handleAddImage = (productId) => {
+   pickImage(productId);
+ };
+
+
   return (
     <View style={styles.container}>
       {products.map((product) => {
+        console.log("product id sss", product.id, product);
         return (
-          <View style={styles.productCard}>
+          <View style={styles.productCard} key={product.id}>
             <View style={styles.productCardTop}>
               <View style={styles.imageContainer}>
-                <Image
-                  style={styles.image}
-                  source={{ uri: product.imageUri }}
-                  resizeMode="contain"
-                />
-                <Image
-                  style={styles.image}
-                  source={require("../assets/1000.jpg")}
-                  resizeMode="contain"
-                />
+                <TouchableOpacity style={styles.addImageButton} onPress={() => handleAddImage(product.id)}>
+                  <Ionicons
+                    style={{ fontSize: 18, color: "#fff" }}
+                    name="add-outline"
+                  ></Ionicons>
+                  
+                </TouchableOpacity>
+                {product.imageUri && (
+                  <Image
+                    source={{ uri: product.imageUri }}
+                    style={styles.image}
+                  />
+                )}
               </View>
               <View style={styles.colorContainer}>
                 <View style={styles.colors}>
@@ -166,7 +217,7 @@ const [sizes, setSizes] = useState([
                         <View style={styles.colorPickerContainer}>
                           <ColorPicker
                             ref={pickerRef}
-                            color={currentColor} // Use currentColor as the initial color
+                            color={currentColor}
                             swatchesOnly={swatchesOnly}
                             onColorChange={onColorChange}
                             onColorChangeComplete={() => {}}
@@ -240,6 +291,11 @@ const [sizes, setSizes] = useState([
             </View>
 
             <View style={styles.optionsContainer}>
+              <View>
+                <Text style={[theme.fontFamily, styles.text]}>
+                  حدد الاحجام المتاحة من المنتج
+                </Text>
+              </View>
               <View style={styles.dropdownContainer}>
                 <TouchableOpacity
                   onPress={handleAddSize}
@@ -303,9 +359,23 @@ const [sizes, setSizes] = useState([
 
                 <View style={styles.price}>
                   <TextInput placeholder="Price" />
-                  <CustomDropdown
-                    style={styles.dropDown}
-                    options={product.price.currency}
+                  <Dropdown
+                    style={styles.dropdownItem}
+                    placeholderStyle={styles.placeholderStyle}
+                    selectedTextStyle={styles.selectedTextStyle}
+                    iconStyle={styles.iconStyle}
+                    data={product.price.currency}
+                    maxHeight={300}
+                    valueField="value"
+                    placeholder=""
+                    value={value}
+                    onFocus={() => setIsFocus(true)}
+                    onBlur={() => setIsFocus(false)}
+                    onChange={(item) => {
+                      setValue(item.value);
+                      setIsFocus(false);
+                    }}
+                    renderItem={renderItem}
                   />
                 </View>
               </View>
@@ -447,8 +517,8 @@ const styles = StyleSheet.create({
     borderColor: theme.colors.light,
     alignItems: "center",
     justifyContent: "center",
-    bottom: 18,
-    right: 18,
+    bottom: 14,
+    left: 14,
     zIndex: 1000,
   },
   addColorButton: {

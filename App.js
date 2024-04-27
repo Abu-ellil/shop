@@ -5,6 +5,7 @@ import { useFonts } from "expo-font";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ProductDetails from "./components/ProductDetails";
 import { theme } from "./assets/theme";
+import ImagePicker from "./components/ImagePicker";
 // import { I18nManager } from "react-native";
 
 
@@ -23,6 +24,7 @@ export default function App() {
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
       <View style={styles.container}>
+      <ImagePicker/>
         <StatusBar style="auto" />
         <View style={styles.mainWrapper}>
           <View style={styles.addProductHeader}>
