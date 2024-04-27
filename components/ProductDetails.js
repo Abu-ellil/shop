@@ -54,7 +54,7 @@ const ProductDetails = ({ productsList }) => {
 
   const onColorChangeComplete = (color) => {
     setOldColor(color);
-    setColorSelectionMade(true); // Mark that a color selection has been made
+    setColorSelectionMade(true); 
   };
 
   const addColor = (product) => {
@@ -111,7 +111,7 @@ const ProductDetails = ({ productsList }) => {
     if (!result.cancelled) {
       const updatedProducts = products.map((product) =>
         product.id === productId
-          ? { ...product, imageUri: result.uri }
+          ? { ...product, imageUri: result.assets[0].uri }
           : product
       );
       setProducts(updatedProducts);
@@ -250,18 +250,23 @@ const ProductDetails = ({ productsList }) => {
                   ></Ionicons>
                 </TouchableOpacity>
               </View>
-              
+
               {/* Dropdown for selecting size */}
               {product.sizes.map((sizesArray, index) => (
-                <View style={styles.container} key={index}>
+                <View style={styles.container} key={index} >
                   <View
                     style={[
                       styles.dropdown,
-                      // isFocus && { borderColor: "orange" },
+                      isFocus && {
+                        borderColor: "orange",
+                        borderWidth: 1,
+                        backgroundColor: "white",
+                      },
                     ]}
                   >
                     <Dropdown
-                      // style={styles.dropdown}
+                      
+                      style={styles.dropdownItem}
                       placeholderStyle={styles.placeholderStyle}
                       selectedTextStyle={styles.selectedTextStyle}
                       iconStyle={styles.iconStyle}
@@ -273,7 +278,7 @@ const ProductDetails = ({ productsList }) => {
                       labelField="label"
                       valueField="value"
                       placeholder="Select size"
-                      value={value} // Use the selected size value here
+                      value={value}
                       onChange={(item) => {
                         setValue(item.value);
                       }}
@@ -528,7 +533,7 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   dropdownItem: {
-    width: 70,
+    width: 90,
     height: 35,
     alignItems: "center",
     justifyContent: "space-between",
