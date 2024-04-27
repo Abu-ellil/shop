@@ -9,9 +9,10 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native"; // Import ActivityIndicator
+} from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import ColorPicker from "react-native-wheel-color-picker";
+import RNPickerSelect from "react-native-picker-select";
 import { theme } from "../assets/theme";
 
 const ProductDetails = ({ productsList }) => {
@@ -24,38 +25,33 @@ const ProductDetails = ({ productsList }) => {
   const [isFocus, setIsFocus] = useState(false);
   const [chosenColorIndex, setChosenColorIndex] = useState(null);
   const [image, setImage] = useState(null);
+  const [selectedValue, setSelectedValue] = useState(null);
 
   useEffect(() => {
     setProducts(productsList);
-    console.log(products);
   }, [productsList]);
 
   const handleColorPress = (index) => {
     setChosenColorIndex(index);
   };
 
-  const [sizes, setSizes] = useState([
-    { label: "S", value: "1" },
-    { label: "M", value: "2" },
-    { label: "L", value: "3" },
-    { label: "XL", value: "4" },
-    { label: "XXL", value: "5" },
-  ]);
+  const [sizes, setSizes] = useState([]);
 
   const handleAddSize = () => {
     const newSizes = [...sizes];
     const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
-    newSizes.push({ label: "New Size", value: newValue });
+    // newSizes.push({ label: "New Size", value: newValue });
+    sizes.push({label: "S", value: "1" },{ label: "M", value: "2" },{ label: "L", value: "3" },{ label: "XL", value: "4" });
     setSizes(newSizes);
-    setValue(newValue); // Select the newly added size
+    console.log(newSizes);
+    // setValue(newValue);
   };
   const handleOptionSelect = () => {
-    // Logic to handle option select
+    
   };
   // Handel color sellection
-  const onColorChange = (color) => {
+  const onColorChange = (color) => { 
     setCurrentColor(color);
-    console.log(products[0].colors);
   };
 
   const onColorChangeComplete = (color) => {
@@ -77,41 +73,58 @@ const ProductDetails = ({ productsList }) => {
   };
 
   // DropDown Menu Stuff``
-  const renderItem = (item) => {
-    console.log("item: ", item);
-    return (
-      <View style={styles.item}>
-        <Text style={styles.textItem}>{item.label}</Text>
-        {item.value === value && (
-          <View
-            style={styles.icon}
-            height={30}
-            borderRightWidth={3}
-            borderColor="orange"
-            marginLeft={10}
-            alignItems="flex-start"
-          />
-        )}
-      </View>
-    );
+
+  const placeholder = {
+    label: "Select an option...",
+    value: null,
   };
 
-  const renderLabel = (option) => {
-    if (value || isFocus) {
-      return (
-        <Text
-          style={[
-            styles.label,
-            isFocus && { color: "orange", borderColor: "orange" },
-          ]}
-        >
-          {option.label}
-          {/* {console.log(option.label)} */}
-        </Text>
-      );
-    }
-    return null;
-  };
+  const options = [
+    { label: "Option 1", value: "option1" },
+    { label: "Option 2", value: "option2" },
+    { label: "Option 3", value: "option3" },
+  ];
+
+  // const renderItem = (item) => {
+    
+  //   return (
+  //     <View style={styles.item}>
+  //       <Text style={styles.textItem}>{item.label}</Text>
+  //       {item.value === value && (
+  //         <View
+  //           style={styles.icon}
+  //           height={30}
+  //           borderRightWidth={3}
+  //           borderColor="orange"
+  //           marginLeft={10}
+  //           alignItems="flex-start"
+  //         />
+  //       )}
+  //     </View>
+  //   );
+  // };
+
+  // const renderLabel = (option) => {
+  //   console.log("option: ", option);
+  //   if (value || isFocus) {
+  //     return (
+  //       <Text
+  //         style={[
+  //           styles.label,
+  //           isFocus &&
+  //             option.value === value && {
+  //               color: "orange",
+  //               borderColor: "orange",
+  //             },
+  //         ]}
+  //       >
+  //         {option.label}
+  //         {/* {console.log(option.label)} */}
+  //       </Text>
+  //     );
+  //   }
+  //   return null;
+  // };
 
   const pickImage = async (productId) => {
     const options = {
@@ -129,12 +142,12 @@ const ProductDetails = ({ productsList }) => {
       quality: 1,
     });
 
-    console.log(result);
+    console.log(result.assets[0].uri);
 
     if (!result.cancelled) {
       const updatedProducts = products.map((product) =>
         product.id === productId
-          ? { ...product, imageUri: result.uri }
+          ? { ...product, imageUri: result.assets[0].uri }
           : product
       );
       setProducts(updatedProducts);
@@ -148,7 +161,6 @@ const ProductDetails = ({ productsList }) => {
   return (
     <View style={styles.container}>
       {products.map((product) => {
-        console.log("product id sss", product.id, product);
         return (
           <View style={styles.productCard} key={product.id}>
             <View style={styles.productCardTop}>
@@ -249,23 +261,20 @@ const ProductDetails = ({ productsList }) => {
                 </View>
               </View>
             </View>
-<View>
-                <Text style={[theme.fontFamily, styles.text]}>
-                  حدد الاحجام المتاحة من المنتج
-                </Text>
-              </View>
+            <View>
+              <Text style={[theme.fontFamily, styles.text]}>
+                حدد الاحجام المتاحة من المنتج
+              </Text>
+            </View>
             <View style={styles.optionsContainer}>
-              
-              
               <View style={styles.dropdownContainer}>
-               
                 {/* Dropdown for adding new size */}
                 <View style={StyleSheet.dropdown}>
                   <TouchableOpacity
                     style={styles.pickerItem}
                     onPress={handleOptionSelect}
                   ></TouchableOpacity>
-                </View> 
+                </View>
                 <TouchableOpacity
                   onPress={handleAddSize}
                   style={styles.addDropDown}
@@ -283,28 +292,19 @@ const ProductDetails = ({ productsList }) => {
                   <View
                     style={[
                       styles.dropdown,
-                      isFocus && { borderColor: "orange" },
+                      // isFocus && { borderColor: "orange" },
                     ]}
                   >
-                    {renderLabel(option)}
-                    <Dropdown
-                      style={styles.dropdownItem}
-                      placeholderStyle={styles.placeholderStyle}
-                      selectedTextStyle={styles.selectedTextStyle}
-                      iconStyle={styles.iconStyle}
-                      data={sizes}
-                      maxHeight={300}
-                      valueField="value"
-                      placeholder=""
-                      value={value}
-                      onFocus={() => setIsFocus(true)}
-                      onBlur={() => setIsFocus(false)}
-                      onChange={(item) => {
-                        setValue(item.value);
-                        setIsFocus(false);
-                      }}
-                      renderItem={renderItem}
-                    />
+                    <View>
+                      <Text>+:</Text>
+                      <TouchableOpacity
+                        placeholder={placeholder}
+                        items={options}
+                        onValueChange={(value) => setSelectedValue(value)}
+                        value={selectedValue}
+                      />
+                      {selectedValue && <Text> {selectedValue}</Text>}
+                    </View>
                   </View>
                 </View>
               ))}
@@ -337,7 +337,6 @@ const ProductDetails = ({ productsList }) => {
                       setValue(item.value);
                       setIsFocus(false);
                     }}
-                    renderItem={renderItem}
                   />
                 </View>
               </View>
