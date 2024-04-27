@@ -11,10 +11,8 @@ export default function EditProduct() {
       {
         id: 10,
         name: "",
-        price: {
-          currency: ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"],
-          value: 10,
-        },
+        price: "100",
+        currency: ["USD"],
         imageUri: "https://picsum.photos/id/9/200/200",
 
         colors: ["#F50909", "#110DF5", "#05F535", "#D2FB03", "#1DD4FD"],
@@ -40,7 +38,8 @@ const addNewProduct = () => {
   const newProduct = {
     id: productsList.length + 1,
     name: "",
-    price: { currency: [], value: 10 },
+    price: 10 ,
+    currency: [],
     imageUri: "https://picsum.photos/id/9/200/200",
     colors: [],
     sizes: [],
