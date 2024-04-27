@@ -1,8 +1,8 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
-import React, { useRef, useState } from "react";
+import * as ImagePicker from "expo-image-picker";
+import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
-  Button,
   Image,
   StyleSheet,
   Text,
@@ -12,69 +12,35 @@ import {
 } from "react-native"; // Import ActivityIndicator
 import { Dropdown } from "react-native-element-dropdown";
 import ColorPicker from "react-native-wheel-color-picker";
-import * as ImagePicker from "expo-image-picker";
 import { theme } from "../assets/theme";
 
-
-
-
-
-
-
-
-
-const ProductDetails = () => {
-  let productsList = [
-    {
-      id: 1,
-      name: "",
-      price: {
-        currency: ["USD", "EUR", "GBP", "JPY", "CAD", "AUD"],
-        value: 10,
-      },
-      imageUri: "../assets/1000.jpg",
-      colors: [],
-      sizes: [
-        { label: "S", value: "1" },
-        { label: "M", value: "2" },
-        { label: "L", value: "3" },
-        { label: "XL", value: "4" },
-        { label: "XXL", value: "5" },
-      ],
-    },
-  ];
-
-
-
-  
+const ProductDetails = ({ productsList }) => {
   const pickerRef = useRef(null);
   const [currentColor, setCurrentColor] = useState("#ffffff");
   const [swatchesOnly, setSwatchesOnly] = useState(false);
   const [colorPickerOn, setColorPickerOn] = useState(false);
-  const [products, setProducts] = useState(productsList);
+  const [products, setProducts] = useState([]);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-    const [chosenColorIndex, setChosenColorIndex] = useState(null);
-const [image, setImage] = useState(null);
+  const [chosenColorIndex, setChosenColorIndex] = useState(null);
+  const [image, setImage] = useState(null);
 
+  useEffect(() => {
+    setProducts(productsList);
+    console.log(products);
+  }, [productsList]);
 
+  const handleColorPress = (index) => {
+    setChosenColorIndex(index);
+  };
 
-
-    const handleColorPress = (index) => {
-      setChosenColorIndex(index);
-    };
-
-
-const [sizes, setSizes] = useState([
-  { label: "S", value: "1" },
-  { label: "M", value: "2" },
-  { label: "L", value: "3" },
-  { label: "XL", value: "4" },
-  { label: "XXL", value: "5" },
-]);
-
-
-
+  const [sizes, setSizes] = useState([
+    { label: "S", value: "1" },
+    { label: "M", value: "2" },
+    { label: "L", value: "3" },
+    { label: "XL", value: "4" },
+    { label: "XXL", value: "5" },
+  ]);
 
   const handleAddSize = () => {
     const newSizes = [...sizes];
@@ -83,7 +49,7 @@ const [sizes, setSizes] = useState([
     setSizes(newSizes);
     setValue(newValue); // Select the newly added size
   };
-  const handleOptionSelect = () => { 
+  const handleOptionSelect = () => {
     // Logic to handle option select
   };
   // Handel color sellection
@@ -110,17 +76,9 @@ const [sizes, setSizes] = useState([
     }
   };
 
-//  const getColorCircleStyle = (color) => {
-//    const baseStyle = [styles.colorCircle, { backgroundColor: color }];
-//    if (currentColor === chosenColor) {
-//      return [...baseStyle, styles.chosenColorCircle];
-//    }
-//    return baseStyle;
-//  };
-
   // DropDown Menu Stuff``
   const renderItem = (item) => {
-    console.log("item: ",item);
+    console.log("item: ", item);
     return (
       <View style={styles.item}>
         <Text style={styles.textItem}>{item.label}</Text>
@@ -155,37 +113,37 @@ const [sizes, setSizes] = useState([
     return null;
   };
 
+  const pickImage = async (productId) => {
+    const options = {
+      title: "Select Image",
+      storageOptions: {
+        skipBackup: true,
+        path: "images",
+      },
+    };
 
- const pickImage = async (productId) => {
-   const options = {
-     title: "Select Image",
-     storageOptions: {
-       skipBackup: true,
-       path: "images",
-     },
-   };
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-   let result = await ImagePicker.launchImageLibraryAsync({
-     mediaTypes: ImagePicker.MediaTypeOptions.All,
-     allowsEditing: true,
-     aspect: [4, 3],
-     quality: 1,
-   });
+    console.log(result);
 
-   console.log(result);
+    if (!result.cancelled) {
+      const updatedProducts = products.map((product) =>
+        product.id === productId
+          ? { ...product, imageUri: result.uri }
+          : product
+      );
+      setProducts(updatedProducts);
+    }
+  };
 
-   if (!result.cancelled) {
-     const updatedProducts = products.map((product) =>
-       product.id === productId ? { ...product, imageUri: result.uri } : product
-     );
-     setProducts(updatedProducts);
-   }
- };
-
- const handleAddImage = (productId) => {
-   pickImage(productId);
- };
-
+  const handleAddImage = (productId) => {
+    pickImage(productId);
+  };
 
   return (
     <View style={styles.container}>
@@ -195,17 +153,20 @@ const [sizes, setSizes] = useState([
           <View style={styles.productCard} key={product.id}>
             <View style={styles.productCardTop}>
               <View style={styles.imageContainer}>
-                <TouchableOpacity style={styles.addImageButton} onPress={() => handleAddImage(product.id)}>
+                <TouchableOpacity
+                  style={styles.addImageButton}
+                  onPress={() => handleAddImage(product.id)}
+                >
                   <Ionicons
                     style={{ fontSize: 18, color: "#fff" }}
                     name="add-outline"
                   ></Ionicons>
-                  
                 </TouchableOpacity>
                 {product.imageUri && (
                   <Image
-                    source={{ uri: product.imageUri }}
                     style={styles.image}
+                    source={{ uri: product.imageUri }}
+                    resizeMode="contain"
                   />
                 )}
               </View>
@@ -243,13 +204,13 @@ const [sizes, setSizes] = useState([
                           />
                           {/* Button */}
                           <TouchableOpacity
-                            style={styles.addButton}
+                            style={styles.chosenColor}
                             onPress={() => {
                               addColor(product);
                               setColorPickerOn(false);
                             }}
                           >
-                            <Text>Add Color</Text>
+                            <Text>Add</Text>
                           </TouchableOpacity>
                         </View>
                       )}
@@ -260,19 +221,6 @@ const [sizes, setSizes] = useState([
                     اختر اللون
                   </Text>
                   <View style={styles.colorList}>
-                    <View style={styles.addColorContainer}>
-                      <View style={styles.addColorButton}>
-                        <View style={[]}></View>
-                        <Ionicons
-                          onPress={() => {
-                            setColorPickerOn(!colorPickerOn);
-                          }}
-                          style={{ fontSize: 18 }}
-                          name="add-outline"
-                        />
-                      </View>
-                    </View>
-
                     {product.colors.map((color, index) => (
                       <TouchableOpacity
                         key={index}
@@ -285,6 +233,18 @@ const [sizes, setSizes] = useState([
                         ]}
                       ></TouchableOpacity>
                     ))}
+                    <View style={styles.addColorContainer}>
+                      <View style={styles.addColorButton}>
+                        <View style={[]}></View>
+                        <Ionicons
+                          onPress={() => {
+                            setColorPickerOn(!colorPickerOn);
+                          }}
+                          style={{ fontSize: 18 }}
+                          name="add-outline"
+                        />
+                      </View>
+                    </View>
                   </View>
                 </View>
               </View>
@@ -424,56 +384,21 @@ const styles = StyleSheet.create({
     marginBottom: 30,
   },
   productCardTop: {
-    width: "100%",
     flexDirection: "row",
     flexWrap: "wrap",
     alignItems: "flex-start",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
     paddingVertical: 10,
     flex: 1,
     marginBottom: 20,
   },
   colorContainer: {
     width: "45%",
-    paddingLeft: 13,
-  },
-  addColorContainer: {},
-  colorPickerContainer: {
-    position: "absolute",
-    borderRadius: 8,
-    padding: 10,
-    backgroundColor: "white",
-    width: 222,
-    height: 350,
-    zIndex: 1000,
-  },
-  addButton: {
-    backgroundColor: "#ccc",
-    fontSize: 16,
-    zIndex: 1011,
-  },
-  imageContainer: {
-    height: 200,
-    flex: 1,
-    backgroundColor: "orange",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: 12,
-    overflow: "hidden",
-  },
-  image: {
-    height: "100%",
-    backgroundColor: "#0553",
-  },
-
-  text: {
-    fontSize: theme.fontSizes.medium,
-    color: theme.colors.dark,
-    paddingBottom: 19,
-    flex: 1,
+    marginLeft: 3,
+    alignItems: "flex-end",
   },
   colors: {
-    width: "90%",
+    width: "80%",
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
@@ -505,7 +430,55 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 2.22,
     elevation: 9,
-    
+  },
+  colorPickerContainer: {
+    position: "absolute",
+    borderRadius: 8,
+    padding: 10,
+    backgroundColor: "#D4D0D0",
+    width: 180,
+    height: 350,
+    right: 50,
+    zIndex: 1000,
+  },
+  chosenColor: {
+    width: 45,
+    height: 25,
+    borderRadius: 25,
+    alignItems: "center",
+    justifyContent: "center",
+    borderColor: "red",
+    borderWidth: 1,
+    marginRight: 10,
+    backgroundColor: "#F8F7FAF1",
+  },
+  addButton: {
+    backgroundColor: "#ccc",
+    fontSize: 16,
+    zIndex: 1011,
+  },
+  imageContainer: {
+    height: 200,
+    width: "100%",
+    flex: 1,
+    backgroundColor: "orange",
+    alignItems: "center",
+    justifyContent: "center",
+    borderRadius: 12,
+    overflow: "hidden",
+  },
+  image: {
+    width: 200,
+    height: 200,
+    resizeMode: "contain",
+    backgroundColor: "#0553",
+  },
+
+  text: {
+    fontSize: theme.fontSizes.medium,
+    color: theme.colors.dark,
+    paddingBottom: 19,
+    flex: 1,
   },
 
   addImageButton: {
@@ -592,8 +565,8 @@ const styles = StyleSheet.create({
     height: 35,
     alignItems: "center",
     justifyContent: "space-around",
-    marginBottom: 22,
-    paddingLeft: 10,
+    // marginBottom: 22,
+    // paddingLeft: 10,
   },
 
   addDropDown: {
