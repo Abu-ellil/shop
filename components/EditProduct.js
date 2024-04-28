@@ -70,13 +70,13 @@ const addNewProduct = () => {
           </View>
 
           <ScrollView>
-            <ProductDetails productsList={productsList}/>
+            <ProductDetails productsList={productsList} />
           </ScrollView>
         </View>
         <View style={styles.addButtonsWrapper}>
           <Text
             onPress={() => {
-              alert("اضافة عنصر جديد من المنتج");
+              addNewProduct();
             }}
             style={styles.addNewProductButtons}
           >
@@ -84,7 +84,7 @@ const addNewProduct = () => {
           </Text>
           <Text
             onPress={() => {
-              addNewProduct()
+              alert("اضافة عنصر جديد من المنتج");
             }}
             style={styles.addProductButtons}
           >

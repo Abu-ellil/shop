@@ -4,7 +4,6 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Image,
-  Modal,
   StyleSheet,
   Text,
   TextInput,
@@ -28,9 +27,10 @@ const ProductDetails = ({ productsList }) => {
   const [discountModalVisible, setDiscountModalVisible] = useState(false);
   const [discountAmount, setDiscountAmount] = useState("");
   const [originalPrice, setOriginalPrice] = useState("");
-  const [selectedSizes, setSelectedSizes] = useState(["M", "L", "XL"]);
+  const [selectedSizes, setSelectedSizes] = useState(["M", "L", "XL",""]);
   const [focusedDropdownIndex, setFocusedDropdownIndex] = useState(null);
- 
+  const [price, setPrice] = useState(null);
+
   const handleFocus = (index) => {
     setFocusedDropdownIndex(index);
   };
@@ -48,13 +48,21 @@ const ProductDetails = ({ productsList }) => {
     setChosenColorIndex(index);
   };
 
-  const handleAddSize = (sizes) => {
-    const newSizes = [...sizes];
-    const newValue = (parseInt(sizes[sizes.length - 1].value) + 1).toString();
-    newSizes.push({ label: "New Size", value: newValue });
-    setSizes(newSizes);
-    setValue(newValue); // Select the newly added size
+  const handleAddSize = (object) => {
+    if(object.sizes.length <7){
+       const newSizes = [...object.sizes];
+    newSizes.push(["S", "M", "L", "XL",""]); // Push new sizes to the copied array
+    object.sizes = newSizes; // Update the sizes in the object
+    console.log("Updated sizes:", newSizes);
+    // Update the state with the modified object
+    setProducts((prevProducts) =>
+      prevProducts.map((p) => (p.id === object.id ? object : p))
+    );
+    }
+   
   };
+
+
   const handleSizeChange = (item, index) => {
     const updatedSelectedSizes = [...selectedSizes];
     updatedSelectedSizes[index] = item.value;
@@ -86,8 +94,6 @@ const ProductDetails = ({ productsList }) => {
     }
   };
 
-
-
   const pickImage = async (productId) => {
     const options = {
       title: "Select Image",
@@ -104,8 +110,6 @@ const ProductDetails = ({ productsList }) => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.cancelled) {
       const updatedProducts = products.map((product) =>
         product.id === productId
@@ -120,49 +124,7 @@ const ProductDetails = ({ productsList }) => {
     pickImage(productId);
   };
 
-  // addDiscount
-  const calculateDiscountedPrice = () => {
-    if (originalPrice && discountAmount) {
-      const discountedPrice =
-        originalPrice - (originalPrice * discountAmount) / 100;
-      return discountedPrice.toFixed(2); // Adjust the number of decimal places as needed
-    }
-    return "";
-  };
-
-  // function to toggle the visibility of the discount modal
-  const toggleDiscountModal = () => {
-    setDiscountModalVisible(!discountModalVisible);
-  };
-
-  // Define a function to handle adding the discount
-  const handleAddDiscount = (product) => {
-    // Validate discount amount
-    if (!discountAmount || isNaN(discountAmount) || discountAmount < 0) {
-      console.log("Please enter a valid discount amount.");
-      return;
-    }
-
-    // Calculate discounted price
-    const discountedPrice = calculateDiscountedPrice();
-
-    // Update product's discount and price
-    const updatedProducts = products.map((p) => {
-      if (p.id === product.id) {
-        return { ...p, discount: parseFloat(discountAmount), discountedPrice };
-      }
-      return p;
-    });
-
-    // Update products list and reset discount amount
-    setProducts(updatedProducts);
-    setDiscountAmount("");
-    // Close the discount modal
-    toggleDiscountModal();
-    console.log(discountModalVisible);
-  };
-
-  // JSX for discount modal
+  
 
   return (
     <View style={styles.container}>
@@ -282,7 +244,7 @@ const ProductDetails = ({ productsList }) => {
                   ></TouchableOpacity>
                 </View>
                 <TouchableOpacity
-                  onPress={handleAddSize}
+                  onPress={() => handleAddSize(product)}
                   style={styles.addDropDown}
                 >
                   <Ionicons
@@ -348,7 +310,7 @@ const ProductDetails = ({ productsList }) => {
                             >
                               {item.label}
                             </Text>
-                            </View>
+                          </View>
                         );
                       }}
                     />
@@ -357,80 +319,115 @@ const ProductDetails = ({ productsList }) => {
               ))}
             </View>
             <View style={styles.cardFooter}>
-              <View style={styles.cardFooterLeft}>
-                <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
-                <TextInput style={styles.quantity} placeholder="Quantity" />
-              </View>
               <View style={styles.cardFooterRight}>
+                <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
+                <TextInput style={styles.quantity} placeholder="50   " />
+              </View>
+              <View style={styles.cardFooterLeft}>
                 <Text style={[theme.fontFamily, styles.text]}>
                   سعر اللون الاول
                 </Text>
 
-                <View style={styles.price}>
-                  <Dropdown
-                    placeholderStyle={styles.placeholderStyle}
-                    selectedTextStyle={styles.selectedTextStyle}
-                    iconStyle={styles.iconStyle}
-                    data={product.currency}
-                    maxHeight={300}
-                    valueField="value"
-                    placeholder={product.currency}
-                    value={value}
-                    onChange={(item) => {
-                      setValue(item.value);
-                      setIsFocus(false);
-                    }}
-                    renderLeftIcon={() => (
-                      <Ionicons
-                        style={styles.icon}
-                        name={
-                          isFocus
-                            ? "chevron-up-outline"
-                            : "chevron-down-outline"
-                        }
-                      />
-                    )}
-                    // renderItem={renderItem}
-                  />
+               {true ? ( <View style={styles.price}>
+                  <View style={styles.priceText}>
+                    <Ionicons
+                      style={styles.priceIcon}
+                      name={
+                        isFocus ? "caret-down-outline" : "caret-down-outline"
+                      }
+                    >
+                      <Text>Shekel()</Text>
+                    </Ionicons>
+                  </View>
+
                   <Text>{product.price}</Text>
-                </View>
+                </View>)
+:
+                (<View style={styles.price}>
+                  <View style={styles.priceText}>
+                    <Ionicons
+                      style={styles.priceIcon}
+                      name={
+                        isFocus ? "caret-down-outline" : "caret-down-outline"
+                      }
+                    >
+                      <Text>Shekel()</Text>
+                    </Ionicons>
+                  </View>
+
+                  <Text>{price}</Text>
+                </View>)}
+
+                {/* Add the discount modal here */}
               </View>
             </View>
 
-            <TouchableOpacity
-              style={styles.discount}
-              onPress={() => {
-                handleAddDiscount(product);
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: theme.colors.orangy,
-                  fontFamily: theme.fontFamily.fontFamily,
+            {!price ? (
+              <TouchableOpacity
+                style={styles.discount}
+                onPress={() => {
+                  toggleDiscountModal();
+                  handleAddDiscount(product);
                 }}
               >
-                إضافة خصم
-              </Text>
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: theme.colors.orangy,
+                    fontFamily: theme.fontFamily.fontFamily,
+                  }}
+                >
+                  إضافة خصم
+                </Text>
 
-              <Ionicons
-                style={{
-                  fontSize: 18,
-                  color: theme.colors.orangy,
-                  paddingLeft: 10,
+                <Ionicons
+                  style={{
+                    fontSize: 18,
+                    color: theme.colors.orangy,
+                    paddingLeft: 10,
+                  }}
+                  name="add-circle-outline"
+                ></Ionicons>
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.discount}
+                onPress={() => {
+                  handleAddDiscount(product);
                 }}
-                name="add-circle-outline"
-              ></Ionicons>
+              >
+                <Text
+                  style={{
+                    fontSize: 18,
+                    color: theme.colors.orangy,
+                    fontFamily: theme.fontFamily.fontFamily,
+                  }}
+                >
+                  حذف الخصم
+                </Text>
 
-              <Modal
+                <Ionicons
+                  style={{
+                    fontSize: 18,
+                    color: theme.colors.orangy,
+                    paddingLeft: 10,
+                  }}
+                  name="trash-outline"
+                ></Ionicons>
+              </TouchableOpacity>
+            )}
+
+            {discountModalVisible && (
+              <View
                 visible={discountModalVisible}
                 transparent={true}
                 animationType="fade"
                 onRequestClose={toggleDiscountModal}
               >
+                {/* Modal content */}
                 <View style={styles.modalContainer}>
                   <View style={styles.modalContent}>
-                    <Text>Original Price: {originalPrice}</Text>
+                    {/* Add inputs for discount amount */}
                     <TextInput
                       placeholder="Discount (%)"
                       value={discountAmount}
@@ -438,7 +435,7 @@ const ProductDetails = ({ productsList }) => {
                       keyboardType="numeric"
                       style={styles.input}
                     />
-                    <Text>Discounted Price: {calculateDiscountedPrice()}</Text>
+                    {/* Add buttons to apply or cancel the discount */}
                     <TouchableOpacity
                       onPress={handleAddDiscount}
                       style={styles.addButton}
@@ -453,8 +450,8 @@ const ProductDetails = ({ productsList }) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-              </Modal>
-            </TouchableOpacity>
+              </View>
+            )}
           </View>
         );
       })}
@@ -600,28 +597,41 @@ const styles = StyleSheet.create({
     flexDirection: "row",
   },
   cardFooterRight: {
-    flex: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingLeft: 40,
   },
   cardFooterLeft: {
     flex: 1,
+
+    paddingRight: 40,
+    alignItems: "flex-end",
+    paddingLeft: 40,
   },
   price: {
-    flexDirection: "row",
-    width: "85%",
-    alignItems: "center",
-    justifyContent: "space-between",
-    backgroundColor: theme.colors.light,
-    borderRadius: 6,
-    padding: 12,
-  },
-  quantity: {
     flexDirection: "row",
     width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: theme.colors.light,
+    backgroundColor: "#fff",
     borderRadius: 6,
-    padding: 18,
+    paddingHorizontal: 30,
+    paddingVertical: 15,
+  },
+  priceText: {
+    width: "100%",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-end",
+  },
+  quantity: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    backgroundColor: "#fff",
+    borderRadius: 6,
+    paddingHorizontal: 30,
+    paddingVertical: 10,
   },
 
   discount: {
@@ -692,15 +702,55 @@ const styles = StyleSheet.create({
   },
   selectedTextStyle: {
     fontSize: 16,
-    
   },
   icon: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     marginRight: 12,
-   fontSize: 18,
-  
+    fontSize: 18,
+  },
+  priceIcon: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 12,
+    // fontSize: 18,
+    width: "100%",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+  },
+  modalContent: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 20,
+    width: "80%",
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    padding: 10,
+    marginBottom: 10,
+  },
+  addButton: {
+    backgroundColor: "blue",
+    padding: 10,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  closeButton: {
+    backgroundColor: "red",
+    padding: 10,
+    borderRadius: 4,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
   },
 });
 
