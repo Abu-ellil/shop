@@ -5,22 +5,131 @@ import { useFonts } from "expo-font";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import ProductDetails from './ProductDetails';
 import { theme } from '../assets/theme';
+import FilterCard from './FilterCard';
 
 export default function EditProduct() {
-    const [productsList, setProductsList] = useState([
-      {
-        id: 10,
-        name: "",
-        price: "100",
-        currency: ["USD"],
-        imageUri: "https://picsum.photos/id/9/200/200",
 
-        colors: ["#F50909", "#110DF5", "#05F535", "#D2FB03", "#1DD4FD"],
-        sizes: [
-          ["S", "M", "L", "XL"],
-          ["S", "M", "L", "XL"],
-          ["S", "M", "L", "XL"]
-        ],
+  const DUMMY_IMAGE = require("../assets/1000.jpg");
+    const [filterList, setFilterList] = useState([
+      {
+        id: 1,
+        color: {
+          id: 1,
+          value: "red",
+        },
+        image: {
+          id: 1,
+          value: require("../assets/1000.jpg"),
+        },
+        childSizeFilter: {
+          id: 1,
+          size: {
+            id: 1,
+            value: "S",
+          },
+          price: {
+            id: 1,
+            value: "100",
+          },
+          coupon: {
+            id: 1,
+            value: "10",
+          },
+          quantity: {
+            id: 1,
+            value: "10",
+          },
+        },
+      },
+      {
+        id: 2,
+        color: {
+          id: 1,
+          value: "orange",
+        },
+        image: {
+          id: 1,
+          value: require("../assets/1000.jpg"),
+        },
+        childSizeFilter: {
+          id: 1,
+          size: {
+            id: 1,
+            value: "Xl",
+          },
+          price: {
+            id: 1,
+            value: "50",
+          },
+          coupon: {
+            id: 1,
+            value: "20",
+          },
+          quantity: {
+            id: 1,
+            value: "30",
+          },
+        },
+      },
+      {
+        id: 1,
+        color: {
+          id: 1,
+          value: "green",
+        },
+        image: {
+          id: 1,
+          value: require("../assets/1000.jpg"),
+        },
+        childSizeFilter: {
+          id: 1,
+          size: {
+            id: 1,
+            value: "S",
+          },
+          price: {
+            id: 1,
+            value: "100",
+          },
+          coupon: {
+            id: 1,
+            value: "10",
+          },
+          quantity: {
+            id: 1,
+            value: "10",
+          },
+        },
+      },
+      {
+        id: 2,
+        color: {
+          id: 1,
+          value: "blue",
+        },
+        image: {
+          id: 1,
+          value: require("../assets/1000.jpg"),
+        },
+        childSizeFilter: {
+          id: 1,
+          size: {
+            id: 1,
+            value: "Xl",
+          },
+          price: {
+            id: 1,
+            value: "50",
+          },
+          coupon: {
+            id: 1,
+            value: "20",
+          },
+          quantity: {
+            id: 1,
+            value: "30",
+          },
+        },
       },
     ]);
     
@@ -34,17 +143,38 @@ export default function EditProduct() {
 
 
 
-const addNewProduct = () => {
-  const newProduct = {
+const addNewFilter = () => {
+  const NewFilter = {
     id: productsList.length + 1,
-    name: "",
-    price: 10 ,
-    currency: [],
-    imageUri: "https://picsum.photos/id/9/200/200",
-    colors: [],
-    sizes: [],
-  };
-  setProductsList([...productsList, newProduct]);
+  color: {
+    id: 1,
+    value: 'red',
+  },
+  image: {
+    id: 1,
+    value: DUMMY_IMAGE,
+  },
+  childSizeFilter: {
+    id: 1,
+    size: {
+      id: 1,
+      value: 'S',
+    },
+    price: {
+      id: 1,
+      value: '100',
+    },
+    coupon: {
+      id: 1,
+      value: '10',
+    },
+    quantity: {
+      id: 1,
+      value: '10',
+    },
+  },
+}
+  setProductsList([...productsList, NewFilter]);
 };
   return (
     <ScrollView contentContainerStyle={styles.scrollViewContainer}>
@@ -70,15 +200,15 @@ const addNewProduct = () => {
           </View>
 
           <ScrollView>
-            <ProductDetails productsList={productsList} />
+            <FilterCard filterList={filterList}/>
           </ScrollView>
         </View>
         <View style={styles.addButtonsWrapper}>
           <Text
             onPress={() => {
-              addNewProduct();
+              addNewFilter();
             }}
-            style={styles.addNewProductButtons}
+            style={styles.addNewFilterButtons}
           >
             اضافة عنصر جديد من المنتج
           </Text>
@@ -102,6 +232,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   container: {
+    minHeight:"100%",
+    justifyContent:"space-between",
     flex: 1,
     backgroundColor: "theme.colors.vl",
     paddingTop: 50,
@@ -144,7 +276,7 @@ const styles = StyleSheet.create({
     padding: 18,
     backgroundColor: theme.colors.light,
   },
-  addNewProductButtons: {
+  addNewFilterButtons: {
     alignItems: "center",
     justifyContent: "center",
     width: "100%",
