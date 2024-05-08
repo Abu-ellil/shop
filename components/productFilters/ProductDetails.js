@@ -8,7 +8,7 @@ import {
   TextInput,
   TouchableOpacity,
   View,
-} from "react-native"; // Import ActivityIndicator
+} from "react-native";
 import { Dropdown } from "react-native-element-dropdown";
 import { theme } from "../../assets/theme";
 import DiscountFilter from "../discount/DiscountFilter";
