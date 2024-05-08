@@ -1,17 +1,17 @@
 import { StyleSheet } from "react-native";
-import { theme } from "../assets/theme";
+import { theme } from "../../assets/theme";
 
 const styles = StyleSheet.create({
   productCard: {
-    height: 470,
-    width: 343,
-    backgroundColor: "coral",
+    backgroundColor: theme.colors.light,
     borderRadius: 12,
     borderColor: theme.colors.gray,
     borderWidth: 1,
     paddingVertical: 20,
     paddingHorizontal: 10,
     marginBottom: 30,
+    position: "relative",
+    flex: 1,
   },
   productCardTop: {
     minHeight: 200,
@@ -27,7 +27,6 @@ const styles = StyleSheet.create({
     width: "45%",
     marginLeft: 3,
     alignItems: "flex-end",
-    height: 300,
   },
   colors: {
     width: "80%",
@@ -42,14 +41,18 @@ const styles = StyleSheet.create({
   },
 
   colorCircle: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     borderRadius: 50,
     marginBottom: 10,
   },
   chosenColorCircle: {
+    width: 35,
+    height: 35,
+    borderRadius: 50,
+    marginBottom: 10,
     borderWidth: 2,
-    borderColor: "#999696",
+    borderColor: "orange",
     shadowColor: "#000",
     shadowOffset: {
       width: 2,
@@ -60,21 +63,14 @@ const styles = StyleSheet.create({
     elevation: 9,
   },
   colorPickerContainer: {
-    flex: 1,
     position: "absolute",
     borderRadius: 8,
     padding: 10,
     backgroundColor: "#D4D0D0",
     width: 180,
+    height: 350,
     right: 50,
     zIndex: 1000,
-  },
-  colorPicker: {
-    flex: 1,
-    position: "absolute",
-    borderRadius: 8,
-    padding: 15,
-    backgroundColor: "#D4D0D0",
   },
   chosenColor: {
     width: "100%",
@@ -122,8 +118,8 @@ const styles = StyleSheet.create({
     zIndex: 1000,
   },
   addColorButton: {
-    width: 30,
-    height: 30,
+    width: 35,
+    height: 35,
     borderStyle: "dashed",
     borderWidth: 1,
     borderRadius: 50,
@@ -143,51 +139,88 @@ const styles = StyleSheet.create({
 
   cardFooter: {
     flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    flex: 1,
+  },
+  priceCurrencyWrapper: {
+    height: "100%",
+    width: "50%",
+    justifyContent: "space-between",
+  },
+  priceCurrency: {
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    paddingRight: 10,
+  },
+  priceCurrency2: {
+    width: "100%",
+    backgroundColor: "#FFFFFF",
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    flexDirection: "row",
+    paddingRight: 10,
+    marginBottom: 10,
   },
   cardFooterRight: {
     alignItems: "center",
-    justifyContent: "center",
-    paddingLeft: 40,
+    width: "45%",
   },
   cardFooterLeft: {
+    alignItems: "center",
+    width: "45%",
     flex: 1,
-
-    paddingRight: 40,
-    alignItems: "flex-end",
-    paddingLeft: 40,
+    paddingHorizontal: 10,
   },
   price: {
-    flexDirection: "row",
-    width: "100%",
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
-    borderRadius: 6,
-    paddingHorizontal: 30,
-    paddingVertical: 15,
-  },
-  priceText: {
-    width: "100%",
     flexDirection: "row",
+    flex: 1,
+  },
+  priceInp: {
+    height: 45,
+    backgroundColor: "white",
+    borderRadius: 6,
     alignItems: "center",
-    justifyContent: "flex-end",
+    justifyContent: "center",
+    width: "50%",
+  },
+  currency: {
+    flexDirection: "row",
+    borderRadius: 6,
+    alignItems: "center",
+    justifyContent: "center",
+    width: "50%",
+    height: 60,
   },
   quantity: {
-    flexDirection: "row",
+    width: "100%",
+    height: 60,
     alignItems: "center",
     justifyContent: "space-between",
-    backgroundColor: "#fff",
+    paddingHorizontal: 10,
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
     borderRadius: 6,
-    paddingHorizontal: 30,
-    paddingVertical: 10,
   },
-
+  discounts: {
+    width: "100%",
+    paddingLeft: " 50%",
+  },
   discount: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-end",
     paddingTop: 20,
   },
+  discountsInput: {},
   dropdownItem: {
     width: 90,
     height: 35,
@@ -258,19 +291,20 @@ const styles = StyleSheet.create({
     marginRight: 12,
     fontSize: 18,
   },
-  priceIcon: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    marginRight: 12,
-    // fontSize: 18,
-    width: "100%",
-  },
+
   modalContainer: {
+    position: "absolute",
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    zIndex: 10000,
+    width: 250,
+    height: 250,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: "rgba(0, 0, 0)",
   },
   modalContent: {
     backgroundColor: "#fff",

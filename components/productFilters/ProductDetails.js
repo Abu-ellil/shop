@@ -1,9 +1,7 @@
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as ImagePicker from "expo-image-picker";
-import React, { useEffect, useRef, useState } from "react";
-import styles from '../components/mainStyles'
+import React, { useEffect, useState } from "react";
 import {
-  ActivityIndicator,
   Image,
   StyleSheet,
   Text,
@@ -11,27 +9,27 @@ import {
   TouchableOpacity,
   View,
 } from "react-native"; // Import ActivityIndicator
-
-
-import { theme } from "../assets/theme";
-import ImageFilter from "./ImageFilter";
-import ColorFilter from "./ColorFilter";
+import { Dropdown } from "react-native-element-dropdown";
+import { theme } from "../../assets/theme";
+import DiscountFilter from "../discount/DiscountFilter";
+import styles from "./Style";
+import ColorsFilter from "./colors/ColorsFilter";
 
 const ProductDetails = ({ productsList }) => {
-  
   const [products, setProducts] = useState([]);
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
+  const [currentColor, setCurrentColor] = useState("#ffffff");
+  const [swatchesOnly, setSwatchesOnly] = useState(false);
+  const [colorPickerOn, setColorPickerOn] = useState(false);
+  const [chosenColorIndex, setChosenColorIndex] = useState(null);
   const [image, setImage] = useState(null);
-  const [discountModalVisible, setDiscountModalVisible] = useState(false);
+  const [discountModalVisible, setDiscountModalVisible] = useState(true);
   const [discountAmount, setDiscountAmount] = useState("");
   const [originalPrice, setOriginalPrice] = useState("");
-  const [selectedSizes, setSelectedSizes] = useState(["M", "L", "XL",""]);
+  const [selectedSizes, setSelectedSizes] = useState(["M", "L", "XL", ""]);
   const [focusedDropdownIndex, setFocusedDropdownIndex] = useState(null);
   const [price, setPrice] = useState(null);
-    
-
-   
 
   const handleFocus = (index) => {
     setFocusedDropdownIndex(index);
@@ -43,39 +41,28 @@ const ProductDetails = ({ productsList }) => {
 
   useEffect(() => {
     setProducts(productsList);
-    
   }, [productsList]);
 
-
-
   const handleAddSize = (object) => {
-    if(object.sizes.length <7){
-       const newSizes = [...object.sizes];
-    newSizes.push(["S", "M", "L", "XL",""]); // Push new sizes to the copied array
-    object.sizes = newSizes; // Update the sizes in the object
-    
-    // Update the state with the modified object
-    setProducts((prevProducts) =>
-      prevProducts.map((p) => (p.id === object.id ? object : p))
-    );
+    if (object.sizes.length < 7) {
+      const newSizes = [...object.sizes];
+      newSizes.push(["S", "M", "L", "XL", ""]); // Push new sizes to the copied array
+      object.sizes = newSizes; // Update the sizes in the object
+
+      // Update the state with the modified object
+      setProducts((prevProducts) =>
+        prevProducts.map((p) => (p.id === object.id ? object : p))
+      );
     }
-   
   };
- const addColor = (product,currentColor) => {
-  console.log( product, currentColor);
-   
- };
 
   const handleSizeChange = (item, index) => {
     const updatedSelectedSizes = [...selectedSizes];
     updatedSelectedSizes[index] = item.value;
     setSelectedSizes(updatedSelectedSizes);
   };
-  const handleOptionSelect = () => {
-    
-  };
+  const handleOptionSelect = () => {};
   // Handel color sellection
-
 
   const pickImage = async (productId) => {
     const options = {
@@ -107,16 +94,60 @@ const ProductDetails = ({ productsList }) => {
     pickImage(productId);
   };
 
-  
-
+  const priceHandler = () => {
+    console.log("priceHandler");
+  };
+  const addColor = (product) => {
+    if (currentColor !== undefined) {
+      const updatedProducts = [...products];
+      const updatedProduct = updatedProducts.find((p) => p.id === product.id);
+      updatedProduct.colors = [...updatedProduct.colors, currentColor];
+      setProducts(updatedProducts);
+      setCurrentColor("#ffffff");
+      setColorPickerOn(false);
+    } else {
+      console.log("Please select a color first.");
+    }
+  };
   return (
     <View style={styles.container}>
       {products.map((product) => {
         return (
           <View style={styles.productCard} key={product.id}>
             <View style={styles.productCardTop}>
-              <ImageFilter product={product} />
-              <ColorFilter product={product} addColor={addColor} />
+              <View style={styles.imageContainer}>
+                <TouchableOpacity
+                  style={styles.addImageButton}
+                  onPress={() => handleAddImage(product.id)}
+                >
+                  <Ionicons
+                    style={{ fontSize: 18, color: "#fff" }}
+                    name="add-outline"
+                  ></Ionicons>
+                </TouchableOpacity>
+                {product.imageUri && (
+                  <Image
+                    style={styles.image}
+                    source={{ uri: product.imageUri }}
+                    resizeMode="contain"
+                  />
+                )}
+              </View>
+
+              <ColorsFilter
+                data={{
+                  product,
+                  addColor,
+                  currentColor,
+                  setCurrentColor,
+                  swatchesOnly,
+                  setSwatchesOnly,
+                  colorPickerOn,
+                  setColorPickerOn,
+                  chosenColorIndex,
+                  setChosenColorIndex,
+                }}
+              />
             </View>
             <View>
               <Text style={[theme.fontFamily, styles.text]}>
@@ -143,8 +174,7 @@ const ProductDetails = ({ productsList }) => {
                 </TouchableOpacity>
               </View>
 
-              {/* Dropdown for selecting size */}
-              {product.sizes?.map((sizesArray, index) => (
+              {product.sizes.map((sizesArray, index) => (
                 <View style={styles.container} key={index}>
                   <View
                     style={[
@@ -163,7 +193,7 @@ const ProductDetails = ({ productsList }) => {
                       iconStyle={styles.iconStyle}
                       onFocus={() => handleFocus(index)}
                       onBlur={handleBlur}
-                      data={sizesArray?.map((size) => ({
+                      data={sizesArray.map((size) => ({
                         label: size,
                         value: size,
                       }))}
@@ -207,148 +237,60 @@ const ProductDetails = ({ productsList }) => {
                 </View>
               ))}
             </View>
+
             <View style={styles.cardFooter}>
-              <View style={styles.cardFooterRight}>
-                <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
-                <TextInput style={styles.quantity} placeholder="50   " />
-              </View>
               <View style={styles.cardFooterLeft}>
-                <Text style={[theme.fontFamily, styles.text]}>
-                  سعر اللون الاول
-                </Text>
-
-                {true ? (
-                  <View style={styles.price}>
-                    <View style={styles.priceText}>
-                      <Ionicons
-                        style={styles.priceIcon}
-                        name={
-                          isFocus ? "caret-down-outline" : "caret-down-outline"
-                        }
-                      >
-                        <Text>Shekel()</Text>
-                      </Ionicons>
-                    </View>
-
-                    <Text>{product.price}</Text>
-                  </View>
-                ) : (
-                  <View style={styles.price}>
-                    <View style={styles.priceText}>
-                      <Ionicons
-                        style={styles.priceIcon}
-                        name={
-                          isFocus ? "caret-down-outline" : "caret-down-outline"
-                        }
-                      >
-                        <Text>Shekel()</Text>
-                      </Ionicons>
-                    </View>
-
-                    <Text>{price}</Text>
-                  </View>
-                )}
-
-                {/* Add the discount modal here */}
+                <Text style={[theme.fontFamily, styles.text]}>الكمية</Text>
+                <TextInput
+                  keyboardType="numeric"
+                  style={styles.quantity}
+                  placeholder="50   "
+                />
               </View>
-            </View>
+              <View style={styles.priceCurrencyWrapper}>
+                <View style={styles.title}>
+                  <Text>سعر اللون الاول</Text>
+                </View>
 
-            {!price ? (
-              <TouchableOpacity
-                style={styles.discount}
-                onPress={() => {
-                  toggleDiscountModal();
-                  handleAddDiscount(product);
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: theme.colors.orangy,
-                    fontFamily: theme.fontFamily.fontFamily,
-                  }}
-                >
-                  إضافة خصم
-                </Text>
-
-                <Ionicons
-                  style={{
-                    fontSize: 18,
-                    color: theme.colors.orangy,
-                    paddingLeft: 10,
-                  }}
-                  name="add-circle-outline"
-                ></Ionicons>
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.discount}
-                onPress={() => {
-                  handleAddDiscount(product);
-                }}
-              >
-                <Text
-                  style={{
-                    fontSize: 18,
-                    color: theme.colors.orangy,
-                    fontFamily: theme.fontFamily.fontFamily,
-                  }}
-                >
-                  حذف الخصم
-                </Text>
-
-                <Ionicons
-                  style={{
-                    fontSize: 18,
-                    color: theme.colors.orangy,
-                    paddingLeft: 10,
-                  }}
-                  name="trash-outline"
-                ></Ionicons>
-              </TouchableOpacity>
-            )}
-
-            {discountModalVisible && (
-              <View
-                visible={discountModalVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={toggleDiscountModal}
-              >
-                {/* Modal content */}
-                <View style={styles.modalContainer}>
-                  <View style={styles.modalContent}>
-                    {/* Add inputs for discount amount */}
+                <View style={styles.priceCurrency}>
+                  <View style={styles.currency}>
+                    {true ? (
+                      <Ionicons
+                        style={{ fontSize: 18 }}
+                        name="caret-up-outline"
+                      />
+                    ) : (
+                      <Ionicons
+                        style={{ fontSize: 18 }}
+                        name="chevron-up-outline"
+                      />
+                    )}
+                    <Text>Shekel()</Text>
+                  </View>
+                  <View style={styles.priceInp}>
                     <TextInput
-                      placeholder="Discount (%)"
-                      value={discountAmount}
-                      onChangeText={setDiscountAmount}
+                      style={styles.price}
                       keyboardType="numeric"
-                      style={styles.input}
+                      placeholder="السعر"
                     />
-                    {/* Add buttons to apply or cancel the discount */}
-                    <TouchableOpacity
-                      onPress={handleAddDiscount}
-                      style={styles.addButton}
-                    >
-                      <Text>Add Discount</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                      onPress={toggleDiscountModal}
-                      style={styles.closeButton}
-                    >
-                      <Text>Close</Text>
-                    </TouchableOpacity>
                   </View>
                 </View>
               </View>
-            )}
+            </View>
+
+            <DiscountFilter
+              data={{
+                product,
+                price,
+                setPrice,
+                priceHandler,
+              }}
+            />
           </View>
         );
       })}
     </View>
   );
 };
-
 
 export default ProductDetails;

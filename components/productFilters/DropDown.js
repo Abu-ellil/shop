@@ -6,10 +6,9 @@ import Ionicons from "@expo/vector-icons/Ionicons";
 
 
 const DropdownComponent = ({ product }) => {
+ 
   const [value, setValue] = useState(null);
   const [isFocus, setIsFocus] = useState(false);
-  
-  
   const renderItem = (item) => {
     return (
       <View style={styles.item}>
@@ -38,7 +37,6 @@ const DropdownComponent = ({ product }) => {
           ]}
         >
           {product.sizes[value - 1]?.label}
-          {console.log(product.sizes[value - 1]?.label)}
         </Text>
       );
     }
